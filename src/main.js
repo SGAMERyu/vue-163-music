@@ -2,7 +2,6 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import './package/reboot/reboot.scss';
 import SGUI from './package/index'
 import router from './router'
 

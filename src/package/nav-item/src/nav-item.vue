@@ -1,5 +1,5 @@
 <template>
-  <li :style="itemStyle" @mouseenter="handelMouseEnter" @mouseleave="handelMouseLeave">
+  <li class="sg-nav-item" :style="[gutter, itemStyle]" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @click="handleClick">
     <slot></slot>
   </li>
 </template>
@@ -25,29 +25,41 @@
         return this.rootMenu.activeTextColor;
       },
       gutter(){
-        return this.rootMenu.gutter;
+        let gutter = {};
+        gutter.paddingLeft = gutter.paddingRight = this.rootMenu.gutter;
+        return gutter;
       },
       itemStyle(){
         let ret = {};
         if(this.active){
           ret.color = this.activeTextColor;
           ret.background = this.hoverBackground;
+        }else{
+          ret.color = this.textColor;
+          ret.background = this.rootMenu.bg;
         }
-        ret.color = this.textColor;
-        ret.background = this.rootMenu.bg;
-        ret.paddingLeft = ret.paddingRight = this.gutter;
         return ret;
       }
     },
     methods: {
-      handelMouseEnter(){
+      handleMouseEnter(){
         this.$el.style.background = this.hoverBackground;
         this.$el.style.color = this.activeTextColor;
       },
-      handelMouseLeave(){
+      handleMouseLeave(){
+        if(this.active) return;
         this.$el.style.background = this.rootMenu.bg;
         this.$el.style.color = this.textColor;
+      },
+      handleClick(){
+        this.$parent.handleItemClick(this.index);
       }
     }
   }
 </script>
+
+<style lang="scss">
+  .sg-nav-item{
+    float: left;
+  }
+</style>

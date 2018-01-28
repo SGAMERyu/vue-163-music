@@ -43,13 +43,19 @@
         classList.push(`flex-justify-${this.justify}`);
         return classList;
       },
+    },
+    methods: {
+      handleItemClick(index){
+        this.activeIndex = index 
+        this.$router.push({name: index})
+      }
     }
   }
 </script>
 
 <style lang="scss" scoped>
   .sg-nav{
-    display: flex;
+    float: left;
   }
 </style>
 

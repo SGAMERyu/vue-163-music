@@ -1,30 +1,33 @@
 <template>
   <div id="app">
     <div class="container">
-      <sg-nav bg="#242424" justify="center" textColor="#ccc" gutter="0.5rem" activeTextColor="#fff" hoverBg="#000" height="70px">
-        <sg-nav-item>link</sg-nav-item>
-        <sg-nav-item>link</sg-nav-item>
-        <sg-nav-item>link</sg-nav-item>
-      </sg-nav>
+      <m-menu></m-menu>
+      <router-view></router-view>
     </div>
   </div>
 </template>
 
 <script>
+import menu from './components/MusicMenu';
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    'm-menu': menu
+  }
 }
 </script>
 
-<style>
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+<style lang="scss">
+@import './package/reboot/reboot.scss';
+body{
+  min-width: 982px;
+  overflow: hidden;
 }
 .container{
   width: 100%;
-  margin: 0 auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 .item{
   background: orange;
