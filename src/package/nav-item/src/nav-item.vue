@@ -60,6 +60,6 @@
 
 <style lang="scss">
   .sg-nav-item{
-    float: left;
+    flex: 0 0 auto;
   }
 </style>

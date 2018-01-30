@@ -1,9 +1,7 @@
 <template>
   <div id="app">
-    <div class="container">
-      <m-menu></m-menu>
-      <router-view></router-view>
-    </div>
+    <m-menu></m-menu>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -23,11 +21,6 @@ export default {
 body{
   min-width: 982px;
   overflow: hidden;
-}
-.container{
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
 }
 .item{
   background: orange;

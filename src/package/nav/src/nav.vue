@@ -55,7 +55,7 @@
 
 <style lang="scss" scoped>
   .sg-nav{
-    float: left;
+    display: flex;
   }
 </style>
 
