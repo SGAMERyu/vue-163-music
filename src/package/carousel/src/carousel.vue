@@ -68,8 +68,21 @@
         if(this.interval < 0) return;
         this.timer = setInterval(this.playSlides, this.interval);
       },
+      observeTimer(){
+        let observe = new IntersectionObserver((entry)=>{
+          entry.forEach(entries => {
+            if(entries.isIntersecting){
+              this.startTimer();
+            }else{
+              clearInterval(this.timer);
+            }
+          })
+        })
+        observe.observe(this.$el);
+      },
       playSlides(){
         if(this.activeIndex < this.items.length - 1){
+          console.log('轮播图运行');
           this.activeIndex++;
         }else{
           this.activeIndex = 0;
@@ -98,7 +111,7 @@
     },
     mounted(){
       this.$nextTick( () => {
-        this.startTimer();
+        this.observeTimer();
       })
     }
   }  
