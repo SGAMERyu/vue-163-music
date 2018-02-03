@@ -4,6 +4,8 @@ import Nav from './nav/index';
 import NavItem from './nav-item/index';
 import Carousel from './carousel/index';
 import CarouselItem from './carousel-item/index';
+import Breadcrumb from './breadcrumb/index';
+import BreadcrumbItem from './breadcrumb-item/index';
 
 const components = [
   Row,
@@ -11,7 +13,9 @@ const components = [
   Nav,
   NavItem,
   Carousel,
-  CarouselItem
+  CarouselItem,
+  Breadcrumb,
+  BreadcrumbItem
 ]
 
 const install = function(Vue, opts = {}){

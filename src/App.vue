@@ -20,7 +20,7 @@ export default {
 @import './package/reboot/reboot.scss';
 body{
   min-width: 982px;
-  overflow: hidden;
+  background-color: #f5f5f5;
 }
 .item{
   background: orange;

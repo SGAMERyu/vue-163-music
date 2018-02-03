@@ -82,7 +82,6 @@
       },
       playSlides(){
         if(this.activeIndex < this.items.length - 1){
-          console.log('轮播图运行');
           this.activeIndex++;
         }else{
           this.activeIndex = 0;
