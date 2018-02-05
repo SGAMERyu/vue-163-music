@@ -2,10 +2,10 @@
   <div class="sg-carousel" :style="style">
     <slot></slot>
     <button class="sg-prev" @click.stop="prev">
-      <img src="../../../assets/arrow-left-o.png" alt="" srcset="">
+      <i class="fas fa-chevron-left fa-2x"></i>
     </button>
-    <button class="sg-next" @clik.stop="next">
-      <img src="../../../assets/arrow-right-o.png" alt="" srcset="">
+    <button class="sg-next" @click.stop="next">
+      <i class="fas fa-chevron-right fa-2x"></i>
     </button>
     <ul class="sg-dots">
       <li v-for="(dot, index) in items" :key="index" class="sg-dot" :class="{active: index === activeIndex}" @click.stop="handleDotClick(index)"></li>
@@ -153,6 +153,7 @@
     border: none;
     top: 50%;
     left: 70px;
+    color: #ffffff;
   }
   .sg-next{
     display: block;
@@ -166,5 +167,6 @@
     border: none;
     top: 50%;
     right: 70px;
+    color: #ffffff;
   }
 </style>
