@@ -2,17 +2,20 @@
   <div id="app">
     <m-menu></m-menu>
     <router-view></router-view>
+    <m-play></m-play>
   </div>
 </template>
 
 <script>
 import menu from './components/MusicMenu';
+import play from './components/MusicPlay';
 
 export default {
   name: 'App',
   components: {
-    'm-menu': menu
-  }
+    'm-menu': menu,
+    'm-play': play
+}
 }
 </script>
 
