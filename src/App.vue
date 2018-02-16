@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <m-menu></m-menu>
+    <!--<m-menu></m-menu>-->
     <router-view></router-view>
-    <m-play></m-play>
+    <sg-slider v-model="value"></sg-slider>
   </div>
 </template>
 
@@ -12,6 +12,11 @@ import play from './components/MusicPlay';
 
 export default {
   name: 'App',
+  data(){
+    return {
+      value: 0
+    }
+  },
   components: {
     'm-menu': menu,
     'm-play': play

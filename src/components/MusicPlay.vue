@@ -87,7 +87,6 @@
           border-radius: 50%;
           background: #b8180d;
           box-shadow: inset 0 0 0 4px #ffffff;
-          position: relative;
           z-index: 99;
         }
         & .play-fill{

@@ -6,6 +6,7 @@ import Carousel from './carousel/index';
 import CarouselItem from './carousel-item/index';
 import Breadcrumb from './breadcrumb/index';
 import BreadcrumbItem from './breadcrumb-item/index';
+import Slider from './slider/index';
 
 const components = [
   Row,
@@ -15,7 +16,8 @@ const components = [
   Carousel,
   CarouselItem,
   Breadcrumb,
-  BreadcrumbItem
+  BreadcrumbItem,
+  Slider
 ]
 
 const install = function(Vue, opts = {}){
