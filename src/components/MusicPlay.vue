@@ -2,7 +2,8 @@
   <div class="m-play">
     <div class="play-btns">
       <span><i class="fas fa-step-backward fa-lg"></i></span>
-      <span><i class="far fa-play-circle fa-lg"></i></span>
+      <span v-show="!isPlay" @click="isPlay = !isPlay"><i class="far fa-play-circle fa-lg"></i></span>
+      <span v-show="isPlay" @click="isPlay = !isPlay"><i class="far fa-pause-circle fa-lg"></i></span>
       <span><i class="fas fa-step-forward fa-lg"></i></span>
     </div>
     <div class="play-head">
@@ -13,11 +14,23 @@
       <audio>
         <source v-for="(src, index) in sources" :key="index">
       </audio>
-      <div class="play-progress" ref="slider" @click="handleClick">
-        <div class="play-fill" ref="fill"></div>
-        <div class="play-thumb"></div>
+      <div class="play-meta">
+        <span class="meta-name">歌名</span>
+        <span class="meta-author">歌手</span>
       </div>
-      <span class="play-time">00:00 / 00:00</span>
+      <div class="play-slider">
+        <sg-slider v-model="value" :gutter="0" :width="493"></sg-slider>
+        <span class="play-time">00:00 / 00:00</span>
+      </div>
+    </div>
+    <div class="play-control">
+      <div class="play-volume" v-show="isVolume">
+        <sg-slider :height="93" :width="4" :gutter="14" v-model="volume" vertical></sg-slider>
+      </div>
+      <span @click="isVolume = !isVolume"><i class="fas fa-volume-up fa-lg"></i></span>
+      <span v-show="!isRandom" @click="isRandom = !isRandom"><i class="fas fa-retweet fa-lg"></i></span>
+      <span v-show="isRandom" @click="isRandom = !isRandom"><i class="fas fa-random fa-lg"></i></span>
+      <span><i class="fas fa-list-ul fa-lg"></i></span>
     </div>
   </div>
 </template>
@@ -29,7 +42,12 @@
       return {
         isPlay: true,
         musicPic: '',
-        sources: []
+        sources: [],
+        value: 0,
+        volume: 0,
+        isVolume: false,
+        isRandom: false,
+        isPlay: false,
       }
     },
     methods: {
@@ -52,8 +70,8 @@
     justify-content: center;
     align-items: center;
     background: #272727;
+    color: #ffffff;
     & .play-btns{
-      color: #ffffff;
       width: 137px;
       & span {
         display: inline-block;
@@ -64,51 +82,65 @@
     }
     & .play-head{
       width: 34px;
-      color: #ffffff;
+      margin-right: 16px;
+      & img {
+        max-width: 34px;
+        max-height: 34px;
+      }
     }
     & .play-audio{
-      width: 493px;
+      width: 608px;
       height: 53px;
       position: relative;
-      & .play-progress{
-        width: 100%;
-        height: 9px;
-        margin: 22px 0;
-        cursor: pointer;
-        background: #131313;
-        border: 1px solid #090909;
-        border-radius: 5px;
-        & .play-thumb{
-          width: 16px;
-          height: 16px;
-          position: absolute;
-          top: calc(50% - 8px);
-          left: 0%;
-          border-radius: 50%;
-          background: #b8180d;
-          box-shadow: inset 0 0 0 4px #ffffff;
-          z-index: 99;
+      & .play-meta{
+        height: 28px;
+        line-height: 28px;
+        overflow: hidden;
+        color: #e8e8e8;
+        font-size: 12px;
+        & .meta-name{
+          max-width: 300px;
+          color: #e8e8e8;
+          overflow: hidden;
+          cursor: pointer;
         }
-        & .play-fill{
-          position: absolute;
-          width: 0%;
-          height: 9px;
-          top: calc(50% - 2.5px);
-          left: 0%;
-          border-radius: 9px;
-          background: #b8180d;
-          pointer-events:none;
-          z-index: 11;
+        & .meta-author{
+          max-width: 220px;
+          margin-left: 15px;
+          color: #9b9b9b;
+          cursor: pointer;
         }
       }
-      & .play-time{
+      & .play-slider{
+        position: relative;
+        width: 493px;
+        & .play-time{
+          position: absolute;
+          height: 18px;
+          line-height: 18px;
+          font-size: 12px;
+          top: calc(50% - 10px);
+          right: -100px;
+        }
+      }
+    }
+    & .play-control{
+      height: 53px;
+      position: relative;
+      & .play-volume{
         position: absolute;
-        height: 18px;
-        line-height: 18px;
-        font-size: 12px;
-        top: calc(50% - 9px);
-        right: -100px;
-        color: #ffffff;
+        top: -113px;
+        width: 32px;
+        height: 113px;
+        background: #272727;
+        padding: 13px 0;
+      }
+      & span {
+        display: inline-block;
+        width: 25px;
+        text-align: center;
+        margin-right: 2px;
+        cursor: pointer;
       }
     }
   }

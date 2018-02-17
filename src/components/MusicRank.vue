@@ -16,7 +16,7 @@
         <router-link to="playlist" class="rank-more">更多</router-link>
       </div>
       <div class="rank-area">
-        <div v-for="(hot, index) in hotList" :key="index" class="rank-hot">
+        <div v-for="(hot, index) in hotList" :key="index" class="rank-hot" @click="getPlayList(hot)">
           <div class="hot-meta">
             <img :src="hot.coverImgUrl" alt="" srcset="">
             <div class="hot-meta-bottom">
@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import { getHotList, getAlbumList, getHomeTop, getArtistsList} from '../api/api';
+import { getHotList, getAlbumList, getHomeTop, getArtistsList, getDetailList, getMusicUrl } from '../api/api';
 
   export default {
     name: 'm-rank',
@@ -142,6 +142,10 @@ import { getHotList, getAlbumList, getHomeTop, getArtistsList} from '../api/api'
       getArtistsList(){
         getArtistsList()
         .then(result => this.artistsList = result.data.artists)
+      },
+      async getPlayList(detail){
+        let { data: { privileges }  } = await getDetailList(detail.id);
+        let { data: { data: [ url ]} } = await getMusicUrl(privileges[0].id);
       }
     },
     created(){

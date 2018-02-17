@@ -2,7 +2,7 @@
   <div class="sg-slider">
     <div class="sg-slider-runway" :style="runwayStyle" ref="runway" @click="onSliderClick">
       <div class="sg-slider-fill" :style="fillSize"></div>
-      <div class="sg-slider-thumb" :style="[thumbOffset, thumbStyle]"></div>
+      <div class="sg-slider-thumb" :style="[thumbOffset, thumbStyle]" @mousedown="onDragStart"></div>
     </div>
   </div>
 </template>
@@ -14,7 +14,11 @@
       return {
         runwaySize: 0,
         runwayTop: 0,
-        runwayLeft: 0
+        runwayLeft: 0,
+        startX: 0,
+        startY: 0,
+        drag: false,
+        newOffset: 0,
       }
     },
     props: {
@@ -63,10 +67,12 @@
     computed: {
       runwayStyle(){
         return this.vertical ? {
-          width: `${this.height}px`,
+          width: `${this.width}px`,
+          height: `${this.height}px`,
           marginLeft: `${this.gutter}px`,
           marginRight: `${this.gutter}px`
        } : {
+          width: `${this.width}px`,
           height: `${this.height}px`,
           marginTop: `${this.gutter}px`,
           marginBottom: `${this.gutter}px`,
@@ -75,34 +81,49 @@
       fillSize(){
         return this.vertical ? {
           width: `${this.width}px`,
-          height: `${100 * (this.value - this.min) / (this.max - this.min)}%`
+          height: this.sliderOffset,
+          bottom: `0%`
         } : {
-          width: `${100 * (this.value - this.min) / (this.max - this.min)}%`,
+          width: this.sliderOffset,
           height: `${this.height}px`,
+          left: `0%`
         }
       },
       thumbStyle(){
         return this.vertical ? {
           width: `${this.thumbSize}px`,
           height: `${this.thumbSize}px`,
-          left: `${this.runwayLeft * 0.5 - this.thumbSize / 2}px`,
+          left: `50%`,
+          transform: `translateX(-50%)`
         } : {
           width: `${this.thumbSize}px`,
           height: `${this.thumbSize}px`,
-          top: `${this.runwayTop * 0.5 - this.thumbSize / 2}px`,
+          top: `50%`,
+          transform: `translateY(-50%)`
         }
       },
       thumbOffset(){
         return this.vertical ? {
-          bottom: `${100 * (this.value - this.min) / (this.max - this.min)}%`
+          bottom: this.sliderOffset
         } : {
-          left: `${100 * (this.value - this.min) / (this.max - this.min)}%`
+          left: this.sliderOffset
         }
+      },
+      sliderOffset(){
+        return `${100 * (this.value - this.min) / (this.max - this.min)}%`;
       }
     },
     methods: {
       setValues(val){
-        this.$emit('input', val)
+        let value;
+        if(val < this.min){
+          value = 0;
+        } else if(val > this.max){
+          value = 100;
+        } else {
+          value = val;
+        }
+        this.$emit('input', value)
       },
       resetSize(){
         this.runwaySize = this.vertical ? this.$refs['runway'].clientHeight : this.$refs['runway'].clientWidth;
@@ -110,9 +131,10 @@
         this.runwayLeft = this.$refs['runway'].clientWidth;
       },
       onSliderClick(e){
+        if(this.drag) return;
         if(this.vertical){
-          const offsetTop = this.$refs['runway'].getBoundingClientRect().top;
-          this.setPosition(((e.clientY - offsetTop) / this.runwaySize));
+          const offsetBottom = this.$refs['runway'].getBoundingClientRect().bottom;
+          this.setPosition(((offsetBottom - e.clientY) / this.runwaySize * 100));
         }else{
           const offsetLeft = this.$refs['runway'].getBoundingClientRect().left
           this.setPosition(((e.clientX - offsetLeft) / this.runwaySize * 100));
@@ -124,6 +146,35 @@
         let value = steps * lengthStep * (this.max - this.min) * 0.01 + this.min
         value = parseFloat(value);
         this.$emit('input', value);
+      },
+      onDragStart(event){
+        event.preventDefault();
+        this.drag = true;
+        if(this.vertical){
+          this.startY = event.clientY; 
+        } else {
+          this.startX = event.clientX;
+        }
+        this.newOffset = parseFloat(this.sliderOffset); 
+        window.addEventListener('mousemove', this.onDraging);
+        window.addEventListener('mouseup', this.onDragEnd)
+      },
+      onDraging(event){
+        let diff = 0;
+        if(this.vertical){
+          let currentY = event.clientY;
+          diff = (this.startY - currentY) / this.runwaySize * 100; 
+        } else {
+          let currentX = event.clientX;
+          diff = (currentX - this.startX) / this.runwaySize * 100;
+        }
+        let newOffset = this.newOffset + diff;
+        this.setPosition(newOffset);
+      },
+      onDragEnd(event){
+        this.drag = false;
+        window.removeEventListener('mousemove', this.onDraging);
+        window.removeEventListener('mouseup', this.onDragEnd);
       }
     },
     mounted(){
@@ -134,9 +185,7 @@
 
 <style lang="scss">
   .sg-slider{
-    width: 493px;
-    height: 53px;
-    margin: 100px auto;
+    height: 100%;
     &-runway{
       width: 100%;
       background: #131313;
@@ -148,14 +197,15 @@
       position: absolute;
       border-radius: 50%;
       background: #b8180d;
-      box-shadow: inset 0 0 0 4px #ffffff;
+      box-shadow: inset 0 0 0 5px #ffffff;
+      transform: translateX(-50%);
       z-index: 99;
     }
     &-fill{
-      width: 0%;
-      left: 0%;
+      position: absolute;
       background: #b8180d;
-      border-radius: 5px;
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
     }
   }
 </style>
