@@ -16,13 +16,13 @@
         <router-link to="playlist" class="rank-more">更多</router-link>
       </div>
       <div class="rank-area">
-        <div v-for="(hot, index) in hotList" :key="index" class="rank-hot" @click="getPlayList(hot)">
+        <div v-for="(hot, index) in hotList" :key="index" class="rank-hot">
           <div class="hot-meta">
             <img :src="hot.coverImgUrl" alt="" srcset="">
             <div class="hot-meta-bottom">
               <span><i class="fas fa-headphones fa-sm"></i></span>
               <span>{{hot.playCount}}</span>
-              <span><i class="far fa-play-circle fa-sm"></i></span>
+              <span @click="handlePlay(hot)"><i class="far fa-play-circle fa-sm"></i></span>
               </div>
           </div>
           <div class="hot-bottom">
@@ -97,8 +97,8 @@
 </template>
 
 <script>
-import { getHotList, getAlbumList, getHomeTop, getArtistsList, getDetailList, getMusicUrl } from '../api/api';
-
+import { getHotList, getAlbumList, getHomeTop, getArtistsList } from '../api/api';
+import { mapState } from 'vuex'
   export default {
     name: 'm-rank',
     data(){
@@ -122,7 +122,7 @@ import { getHotList, getAlbumList, getHomeTop, getArtistsList, getDetailList, ge
           list.tracks = list.tracks.slice(0, 10);
           return list;
         })
-      }
+      },
     },
     methods: {
       getHotList(){
@@ -143,9 +143,8 @@ import { getHotList, getAlbumList, getHomeTop, getArtistsList, getDetailList, ge
         getArtistsList()
         .then(result => this.artistsList = result.data.artists)
       },
-      async getPlayList(detail){
-        let { data: { privileges }  } = await getDetailList(detail.id);
-        let { data: { data: [ url ]} } = await getMusicUrl(privileges[0].id);
+      handlePlay(playlist){
+        this.$store.dispatch('getMusicDetail', playlist);
       }
     },
     created(){

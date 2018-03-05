@@ -149,6 +149,7 @@
       },
       onDragStart(event){
         event.preventDefault();
+        this.resetSize();
         this.drag = true;
         if(this.vertical){
           this.startY = event.clientY; 

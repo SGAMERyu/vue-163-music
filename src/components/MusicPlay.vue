@@ -7,16 +7,14 @@
       <span><i class="fas fa-step-forward fa-lg"></i></span>
     </div>
     <div class="play-head">
-      <span v-if="isPlay"><i class="fas fa-music fa-lg"></i></span>
-      <span v-else><img :src="musicPic" alt="" srcset=""></span>
+      <span v-show="!playPic" class="fas fa-music fa-lg"></span>
+      <span v-show="playPic"><img :src="playPic"></span>
     </div>
     <div class="play-audio">
-      <audio>
-        <source v-for="(src, index) in sources" :key="index">
-      </audio>
+      <audio ref="musicAudio"></audio>
       <div class="play-meta">
-        <span class="meta-name">歌名</span>
-        <span class="meta-author">歌手</span>
+        <span class="meta-name" v-show="alName">{{alName}}</span>
+        <span class="meta-author" v-show="arName">{{arName}}</span>
       </div>
       <div class="play-slider">
         <sg-slider v-model="value" :gutter="0" :width="493"></sg-slider>
@@ -36,24 +34,53 @@
 </template>
 
 <script>
+import { getMusicUrl } from '../api/api';
+
   export default {
     name: 'm-play',
     data(){
       return {
-        isPlay: true,
-        musicPic: '',
-        sources: [],
+        isPlay: false,
+        playIndex: null,
         value: 0,
         volume: 0,
         isVolume: false,
         isRandom: false,
-        isPlay: false,
+      }
+    },
+    computed: {
+      playTracks(){
+        const length = this.$store.state.music.tracks.length;
+        if(length > 0){
+          this.isRandom ? this.playIndex = Math.floor(Math.random() * length) : this.playIndex = 0;
+        }
+        return this.$store.state.music.tracks;
+      },
+      playPic(){
+        return this.playTracks.length > 0 ? this.playTracks[this.playIndex].al.picUrl : ''; 
+      },
+      alName(){
+       return this.playTracks.length > 0 ? this.playTracks[this.playIndex].al.name : ''; 
+      },
+      arName(){
+        return this.playTracks.length > 0 ? this.playTracks[this.playIndex].ar[0].name : '';
+      }
+    },
+    watch: {
+      playIndex(val, oldval){
+        let { id } = this.playTracks[val];
+        this.getMusicUrl(id);
       }
     },
     methods: {
-      handleClick(event){
-        const offsetLfet = this.$refs.slider.getBoundingClientRect().left;
-        console.log((event.clientX - offsetLfet ) / this.$refs.slider.clientWidth * 100);
+      getMusicUrl(id){
+        getMusicUrl(id)
+        .then((result) => {
+         let { data : { data: [ {url} ] } } = result;
+         const musicAudio = this.$refs['musicAudio'];
+         musicAudio.src = url;
+         musicAudio.play();
+        })  
       }
     }
   }  
@@ -82,10 +109,17 @@
     }
     & .play-head{
       width: 34px;
+      height: 100%;
       margin-right: 16px;
-      & img {
-        max-width: 34px;
-        max-height: 34px;
+      & span {
+        display: inline-block;
+        width: 34px;
+        height: 34px;
+        margin: 9.5px 0;
+        & img {
+          max-width: 34px;
+          max-height: 34px;
+        }
       }
     }
     & .play-audio{

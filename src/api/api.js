@@ -8,5 +8,6 @@ export const getAlbumList = () => axios.get(`/top/album?offset=0&limit=5`);
 export const getTopList = (idx) => axios.get(`/top/list?idx=${idx}`)
 export const getHomeTop = () => axios.all([getTopList(0), getTopList(1), getTopList(2)])
 export const getArtistsList = () => axios.get(`/top/artists?offset=0&limit=5`);
-export const getDetailList = (id) => axios.get(`/playlist/detail?id=${id}`)
+export const getMusicDetail = (id) => axios.get(`/playlist/detail?id=${id}`)
 export const getMusicUrl = (id) => axios.get(`/music/url?id=${id}`);
+export const getMuscicLyric = (id) => axios.get(`/lyric?id=${id}`);
