@@ -1,10 +1,10 @@
 <template>
   <div class="m-play">
     <div class="play-btns">
-      <span><i class="fas fa-step-backward fa-lg"></i></span>
-      <span v-show="!isPlay" @click="isPlay = !isPlay"><i class="far fa-play-circle fa-lg"></i></span>
-      <span v-show="isPlay" @click="isPlay = !isPlay"><i class="far fa-pause-circle fa-lg"></i></span>
-      <span><i class="fas fa-step-forward fa-lg"></i></span>
+      <span class="fas fa-step-backward fa-lg" @click="prev"></span>
+      <span v-show="!isPlay" @click.stop="onPlay" class="far fa-play-circle fa-lg"></span>
+      <span v-show="isPlay" @click.stop="onPause" class="far fa-pause-circle fa-lg"></span>
+      <span class="fas fa-step-forward fa-lg" @click="next"></span>
     </div>
     <div class="play-head">
       <span v-show="!playPic" class="fas fa-music fa-lg"></span>
@@ -17,18 +17,18 @@
         <span class="meta-author" v-show="arName">{{arName}}</span>
       </div>
       <div class="play-slider">
-        <sg-slider v-model="value" :gutter="0" :width="493"></sg-slider>
-        <span class="play-time">00:00 / 00:00</span>
+        <sg-slider v-model="value" :gutter="0" :width="493" @change="setTime"></sg-slider>
+        <span class="play-time">{{currentTime}} / {{totalTime}}</span>
       </div>
     </div>
     <div class="play-control">
       <div class="play-volume" v-show="isVolume">
-        <sg-slider :height="93" :width="4" :gutter="14" v-model="volume" vertical></sg-slider>
+        <sg-slider :height="93" :width="4" :gutter="14" v-model="volume" vertical @change="setVolume"></sg-slider>
       </div>
       <span @click="isVolume = !isVolume"><i class="fas fa-volume-up fa-lg"></i></span>
-      <span v-show="!isRandom" @click="isRandom = !isRandom"><i class="fas fa-retweet fa-lg"></i></span>
-      <span v-show="isRandom" @click="isRandom = !isRandom"><i class="fas fa-random fa-lg"></i></span>
-      <span><i class="fas fa-list-ul fa-lg"></i></span>
+      <span v-if="!isRandom" @click="isRandom = !isRandom" class="fas fa-retweet fa-lg"></span>
+      <span v-else @click="isRandom = !isRandom" class="fas fa-random fa-lg"></span>
+      <span class="fas fa-list-ul fa-lg"></span>
     </div>
   </div>
 </template>
@@ -41,47 +41,126 @@ import { getMusicUrl } from '../api/api';
     data(){
       return {
         isPlay: false,
-        playIndex: null,
+        playIndex: -1,
         value: 0,
-        volume: 0,
+        volume: 50,
         isVolume: false,
         isRandom: false,
+        musicAudio: null,
+        currentTime: '00 : 00',
+        totalTime: '00 : 00',
       }
     },
     computed: {
       playTracks(){
-        const length = this.$store.state.music.tracks.length;
-        if(length > 0){
-          this.isRandom ? this.playIndex = Math.floor(Math.random() * length) : this.playIndex = 0;
-        }
-        return this.$store.state.music.tracks;
+        return this.$store.state.music.tracks; 
       },
       playPic(){
         return this.playTracks.length > 0 ? this.playTracks[this.playIndex].al.picUrl : ''; 
       },
       alName(){
-       return this.playTracks.length > 0 ? this.playTracks[this.playIndex].al.name : ''; 
+       return this.playTracks.length > 0 ? this.playTracks[this.playIndex].name : ''; 
       },
       arName(){
         return this.playTracks.length > 0 ? this.playTracks[this.playIndex].ar[0].name : '';
-      }
+      },
     },
     watch: {
       playIndex(val, oldval){
+        if(this.playTracks.length == 1 && val == 0) return;
         let { id } = this.playTracks[val];
-        this.getMusicUrl(id);
-      }
+        this.setUrl(id);
+      },
+      currentTime(){
+        this.setValue();
+      },
+      playTracks(val){
+        if(val.length == 1) {
+          let { id } = this.playTracks[0];
+          this.setUrl(id);
+          this.playIndex = 0;
+        }else{
+          this.value = 0;
+          this.next();
+        }
+      },
     },
     methods: {
-      getMusicUrl(id){
-        getMusicUrl(id)
-        .then((result) => {
-         let { data : { data: [ {url} ] } } = result;
-         const musicAudio = this.$refs['musicAudio'];
-         musicAudio.src = url;
-         musicAudio.play();
-        })  
+      async setUrl(id){
+        let { data : { data: [ {url} ] } } = await getMusicUrl(id);
+        this.musicAudio.src = url;
+      },
+      setVolume(val){
+        this.musicAudio.volume = val * 0.01;
+      },
+      bindEvent(){
+        this.musicAudio.addEventListener('canplay', ()=> { 
+            this.value = 0;
+            this.onPlay();
+            this.totalTime = this.coverTime(this.musicAudio.duration);
+        });
+        this.musicAudio.addEventListener('timeupdate', ()=> {
+            this.currentTime = this.coverTime(this.musicAudio.currentTime);
+        })
+        this.musicAudio.addEventListener('ended', () => {
+            this.value = 0;
+            this.next();
+        })
+      },
+      coverTime(time){
+        let minute = Math.floor(time / 60 % 60);
+        let second = Math.floor(time % 60); 
+        minute = minute >= 10 ? minute : `0${minute}`;
+        second = second >= 10 ? second : `0${second}`; 
+        return `${minute} : ${second}`;
+      },
+      setValue(){
+        let value = Math.floor(this.musicAudio.currentTime / this.musicAudio.duration * 100);
+        this.value = value;
+      },
+      setTime(val){
+        this.musicAudio.currentTime = this.musicAudio.duration * val * 0.01;
+      },
+      setIndex(index){
+        if(this.isRandom){
+          this.playIndex = Math.floor(Math.random() * this.playTracks.length)
+        }else if(index < 0){
+          this.playIndex = this.playTracks.length - 1;
+        }else if(index > this.playTracks.length - 1){
+          this.playIndex = 0;
+        }else{
+          this.playIndex = index;
+        }
+      },
+      onPlay(){
+        this.musicAudio.play();
+        this.isPlay = true;
+      },
+      onPause(){
+        this.musicAudio.pause();
+        this.isPlay = false;
+      },
+      prev(){
+        if(this.playTracks.length === 1){
+          let { id } = this.playTracks[0];
+          this.setUrl(id);
+        };
+        this.onPause();
+        this.setIndex(this.playIndex - 1);
+      },
+      next(){
+        if(this.playTracks.length === 1){
+          let { id } = this.playTracks[0];
+          this.setUrl(id);
+        }else{
+          this.onPause();
+          this.setIndex(this.playIndex + 1);
+        }
       }
+    },
+    mounted(){
+      this.musicAudio = this.$refs['musicAudio'];
+      this.bindEvent();
     }
   }  
 </script>

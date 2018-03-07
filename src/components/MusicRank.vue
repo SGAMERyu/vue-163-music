@@ -22,7 +22,7 @@
             <div class="hot-meta-bottom">
               <span><i class="fas fa-headphones fa-sm"></i></span>
               <span>{{hot.playCount}}</span>
-              <span @click="handlePlay(hot)"><i class="far fa-play-circle fa-sm"></i></span>
+              <span @click="handleDetail(hot)"><i class="far fa-play-circle fa-sm"></i></span>
               </div>
           </div>
           <div class="hot-bottom">
@@ -41,7 +41,7 @@
         <div v-for="(album, index) in albumLists" :key="index" class="rank-album">
           <div class="album-meta">
             <img :src="album.picUrl" alt="">
-            <span class="album-play"><i class="far fa-play-circle fa-sm"></i></span>
+            <span @click="handlePlay(album)" class="album-play"><i class="far fa-play-circle fa-sm"></i></span>
           </div>
           <div class="album-bottom">
             <p>{{album.name}}</p>
@@ -63,7 +63,7 @@
             <div class="top-desc">
               <span>{{top.name}}</span>
               <div class="top-btn">
-                <span><i class="far fa-play-circle fa-lg"></i></span>
+                <span @click="handleAllSong(top)"><i class="far fa-play-circle fa-lg"></i></span>
                 <span><i class="far fa-folder fa-lg"></i></span>
               </div>
             </div>
@@ -73,7 +73,7 @@
               <span class="list-type" :class="{'top': index + 1 <= 3}">{{index + 1}}</span>
               <span class="list-name">{{track.name}}</span>
               <div class="oper">
-                <span><i class="far fa-play-circle fa-lg"></i></span>
+                <span @click="handleSong(track)"><i class="far fa-play-circle fa-lg"></i></span>
                 <span><i class="fas fa-plus fa-lg"></i></span>
                 <span><i class="far fa-folder fa-lg"></i></span>
               </div>
@@ -97,8 +97,9 @@
 </template>
 
 <script>
-import { getHotList, getAlbumList, getHomeTop, getArtistsList } from '../api/api';
-import { mapState } from 'vuex'
+import { getHotList, getAlbumList, getHomeTop, getArtistsList, getTopList} from '../api/api';
+import { mapState } from 'vuex';
+
   export default {
     name: 'm-rank',
     data(){
@@ -143,8 +144,17 @@ import { mapState } from 'vuex'
         getArtistsList()
         .then(result => this.artistsList = result.data.artists)
       },
-      handlePlay(playlist){
+      handleDetail(playlist){
         this.$store.dispatch('getMusicDetail', playlist);
+      },
+      handlePlay(play){
+        this.$store.dispatch('getAlbumDetail', play);
+      },
+      handleSong(play){
+        this.$store.dispatch('getSongDetail', play);
+      },
+      handleAllSong(top){
+        this.$store.commit('getTracks', this.topList[0].tracks);  
       }
     },
     created(){

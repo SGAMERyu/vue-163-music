@@ -115,15 +115,13 @@
     },
     methods: {
       setValues(val){
-        let value;
         if(val < this.min){
-          value = 0;
+          this.$emit('input', this.min);
         } else if(val > this.max){
-          value = 100;
+          this.$emit('input', this.max);
         } else {
-          value = val;
+          this.$emit('input', val)
         }
-        this.$emit('input', value)
       },
       resetSize(){
         this.runwaySize = this.vertical ? this.$refs['runway'].clientHeight : this.$refs['runway'].clientWidth;
@@ -131,6 +129,7 @@
         this.runwayLeft = this.$refs['runway'].clientWidth;
       },
       onSliderClick(e){
+        this.resetSize();
         if(this.drag) return;
         if(this.vertical){
           const offsetBottom = this.$refs['runway'].getBoundingClientRect().bottom;
@@ -139,6 +138,7 @@
           const offsetLeft = this.$refs['runway'].getBoundingClientRect().left
           this.setPosition(((e.clientX - offsetLeft) / this.runwaySize * 100));
         }
+        this.emitChange();
       },
       setPosition(precent){
         const lengthStep = 100 / ((this.max - this.min) / this.step);
@@ -148,7 +148,6 @@
         this.$emit('input', value);
       },
       onDragStart(event){
-        event.preventDefault();
         this.resetSize();
         this.drag = true;
         if(this.vertical){
@@ -174,8 +173,14 @@
       },
       onDragEnd(event){
         this.drag = false;
+        this.emitChange();
         window.removeEventListener('mousemove', this.onDraging);
         window.removeEventListener('mouseup', this.onDragEnd);
+      },
+      emitChange(){
+        this.$nextTick(() => {
+          this.$emit('change', this.value);
+        })
       }
     },
     mounted(){
@@ -199,7 +204,6 @@
       border-radius: 50%;
       background: #b8180d;
       box-shadow: inset 0 0 0 5px #ffffff;
-      transform: translateX(-50%);
       z-index: 99;
     }
     &-fill{

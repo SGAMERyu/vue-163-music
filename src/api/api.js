@@ -11,3 +11,5 @@ export const getArtistsList = () => axios.get(`/top/artists?offset=0&limit=5`);
 export const getMusicDetail = (id) => axios.get(`/playlist/detail?id=${id}`)
 export const getMusicUrl = (id) => axios.get(`/music/url?id=${id}`);
 export const getMuscicLyric = (id) => axios.get(`/lyric?id=${id}`);
+export const getAlbumDetail = (id) => axios.get(`/album?id=${id}`);
+export const getSongDetail = (id) => axios.get(`/song/detail?ids=${id}`);
