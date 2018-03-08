@@ -57,19 +57,19 @@
         <router-link to="toplist" class="rank-more">更多</router-link>
       </div>
       <div class="rank-area">
-        <div v-for="(top, index) in topList" :key="index" class="rank-top">
+        <div v-for="(top, index) in topLists" :key="index" class="rank-top">
           <div class="top-meta">
             <img :src="top.coverImgUrl" alt="" srcset="">
             <div class="top-desc">
               <span>{{top.name}}</span>
               <div class="top-btn">
-                <span @click="handleAllSong(top)"><i class="far fa-play-circle fa-lg"></i></span>
+                <span @click="handleAllSong(index)"><i class="far fa-play-circle fa-lg"></i></span>
                 <span><i class="far fa-folder fa-lg"></i></span>
               </div>
             </div>
           </div>
           <ul class="top-list" type="1">
-            <li v-for="(track, index) in top.tracks" :key="index">
+            <li v-for="(track, index) in topList[index]" :key="index">
               <span class="list-type" :class="{'top': index + 1 <= 3}">{{index + 1}}</span>
               <span class="list-name">{{track.name}}</span>
               <div class="oper">
@@ -119,10 +119,12 @@ import { mapState } from 'vuex';
         })
       },
       topList(){
-        return this.topLists.map(list => {
-          list.tracks = list.tracks.slice(0, 10);
-          return list;
+        let tracks = [];
+        this.topLists.forEach((top, index) => {
+          let arr = top.tracks.slice(0, 10);
+          tracks[index] = arr;
         })
+        return tracks;
       },
     },
     methods: {
@@ -153,9 +155,9 @@ import { mapState } from 'vuex';
       handleSong(play){
         this.$store.dispatch('getSongDetail', play);
       },
-      handleAllSong(top){
-        this.$store.commit('getTracks', this.topList[0].tracks);  
-      }
+      handleAllSong(index){
+        this.$store.commit('getTracks', this.topLists[index].tracks);  
+      },
     },
     created(){
       this.getHotList();

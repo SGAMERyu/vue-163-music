@@ -2,8 +2,8 @@
   <div class="m-play">
     <div class="play-btns">
       <span class="fas fa-step-backward fa-lg" @click="prev"></span>
-      <span v-show="!isPlay" @click.stop="onPlay" class="far fa-play-circle fa-lg"></span>
-      <span v-show="isPlay" @click.stop="onPause" class="far fa-pause-circle fa-lg"></span>
+      <span v-show="!isPlay" @click="isPlay = !isPlay" class="far fa-play-circle fa-lg"></span>
+      <span v-show="isPlay" @click="isPlay = !isPlay" class="far fa-pause-circle fa-lg"></span>
       <span class="fas fa-step-forward fa-lg" @click="next"></span>
     </div>
     <div class="play-head">
@@ -55,38 +55,36 @@ import { getMusicUrl } from '../api/api';
       playTracks(){
         return this.$store.state.music.tracks; 
       },
+      playLength(){
+        return this.$store.state.music.tracks.length;
+      },
       playPic(){
-        return this.playTracks.length > 0 ? this.playTracks[this.playIndex].al.picUrl : ''; 
+        return this.playLength > 0 ? this.playTracks[this.playIndex].al.picUrl : ''; 
       },
       alName(){
-       return this.playTracks.length > 0 ? this.playTracks[this.playIndex].name : ''; 
+       return this.playLength > 0 ? this.playTracks[this.playIndex].name : ''; 
       },
       arName(){
-        return this.playTracks.length > 0 ? this.playTracks[this.playIndex].ar[0].name : '';
+        return this.playLength > 0 ? this.playTracks[this.playIndex].ar[0].name : '';
       },
     },
     watch: {
-      playIndex(val, oldval){
-        if(this.playTracks.length == 1 && val == 0) return;
-        let { id } = this.playTracks[val];
-        this.setUrl(id);
-      },
       currentTime(){
         this.setValue();
       },
       playTracks(val){
-        if(val.length == 1) {
-          let { id } = this.playTracks[0];
-          this.setUrl(id);
-          this.playIndex = 0;
-        }else{
-          this.value = 0;
-          this.next();
-        }
+        val.length === 1 ? this.playIndex = 0 : this.playIndex = -1;
+        this.next();
       },
+      isPlay(val){
+        val ? this.musicAudio.play() : this.musicAudio.pause();
+      }
     },
     methods: {
-      async setUrl(id){
+      async setUrl(index){
+        this.value = 0;
+        this.isPlay = false;
+        let { id } = this.playTracks[index];
         let { data : { data: [ {url} ] } } = await getMusicUrl(id);
         this.musicAudio.src = url;
       },
@@ -95,15 +93,13 @@ import { getMusicUrl } from '../api/api';
       },
       bindEvent(){
         this.musicAudio.addEventListener('canplay', ()=> { 
-            this.value = 0;
-            this.onPlay();
+            this.isPlay = true;
             this.totalTime = this.coverTime(this.musicAudio.duration);
         });
         this.musicAudio.addEventListener('timeupdate', ()=> {
             this.currentTime = this.coverTime(this.musicAudio.currentTime);
         })
         this.musicAudio.addEventListener('ended', () => {
-            this.value = 0;
             this.next();
         })
       },
@@ -125,37 +121,20 @@ import { getMusicUrl } from '../api/api';
         if(this.isRandom){
           this.playIndex = Math.floor(Math.random() * this.playTracks.length)
         }else if(index < 0){
-          this.playIndex = this.playTracks.length - 1;
-        }else if(index > this.playTracks.length - 1){
+          this.playIndex = this.playLength - 1;
+        }else if(index > this.playLength - 1){
           this.playIndex = 0;
         }else{
           this.playIndex = index;
         }
       },
-      onPlay(){
-        this.musicAudio.play();
-        this.isPlay = true;
-      },
-      onPause(){
-        this.musicAudio.pause();
-        this.isPlay = false;
-      },
       prev(){
-        if(this.playTracks.length === 1){
-          let { id } = this.playTracks[0];
-          this.setUrl(id);
-        };
-        this.onPause();
-        this.setIndex(this.playIndex - 1);
+        this.playLength !== 1 ? this.setIndex(this.playIndex - 1) : ''
+        this.setUrl(this.playIndex);
       },
       next(){
-        if(this.playTracks.length === 1){
-          let { id } = this.playTracks[0];
-          this.setUrl(id);
-        }else{
-          this.onPause();
-          this.setIndex(this.playIndex + 1);
-        }
+        this.playLength !== 1 ? this.setIndex(this.playIndex + 1) : '';
+        this.setUrl(this.playIndex);
       }
     },
     mounted(){
