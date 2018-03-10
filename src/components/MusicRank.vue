@@ -18,7 +18,7 @@
       <div class="rank-area">
         <div v-for="(hot, index) in hotList" :key="index" class="rank-hot">
           <div class="hot-meta">
-            <img :src="hot.coverImgUrl" alt="" srcset="">
+            <img :src="hot.picUrl" alt="" srcset="">
             <div class="hot-meta-bottom">
               <span><i class="fas fa-headphones fa-sm"></i></span>
               <span>{{hot.playCount}}</span>
@@ -88,7 +88,7 @@
         <span>入驻歌手</span>
         <router-link to="playlist" class="rank-more">查看全部</router-link>
       </div>
-      <div class="rank-singed" v-for="(artists, index) in artistsList" :key="index">
+      <div class="rank-singed" v-for="(artists, index) in artistsLists" :key="index">
         <img :src="artists.picUrl" alt="" srcset="">
           <h3 class="singed-name">{{artists.name}}</h3>
       </div>
@@ -97,22 +97,23 @@
 </template>
 
 <script>
-import { getHotList, getAlbumList, getHomeTop, getArtistsList, getTopList} from '../api/api';
+import { api } from '../api/api';
 import { mapState } from 'vuex';
 
   export default {
     name: 'm-rank',
     data(){
       return {
+        homeData: [],
+        topLists: [],
         hotLists: [],
         albumLists: [],
-        topLists: [],
-        artistsList: []
+        artistsLists: []
       }
     },
     computed: {
       hotList(){
-        return this.hotLists.map(list => { 
+        return this.hotLists.slice(0, 8).map(list => { 
           let playCount = list.playCount / Math.pow(10, 4); 
           playCount > 10 ? list.playCount = String(playCount).replace(/\.\d+/, '万') : '';
           return list;
@@ -122,29 +123,17 @@ import { mapState } from 'vuex';
         let tracks = [];
         this.topLists.forEach((top, index) => {
           let arr = top.tracks.slice(0, 10);
-          tracks[index] = arr;
+          tracks.push(arr)
         })
         return tracks;
       },
     },
     methods: {
-      getHotList(){
-        getHotList()
-        .then(result => this.hotLists = result.data.playlists);
-      },
-      getAlbumList(){
-        getAlbumList()
-        .then(result => this.albumLists = result.data.albums);
-      },
-      getTopList(){
-        getHomeTop()
-        .then(result => result.forEach(res => {
-          this.topLists.push(res.data.playlist);
-        }))
-      },
-      getArtistsList(){
-        getArtistsList()
-        .then(result => this.artistsList = result.data.artists)
+      async getData(){
+        [{data: { result: this.hotLists } }, { data: { albums: this.albumLists} }, { data: { artists: this.artistsLists } }] = await Promise.all([api.getPersonalized(), api.getTopAlbum$offset(0, {limit: 5}, true), api.getTopArtists$offset(0, {limit: 5}, true)])
+
+        const topList = await Promise.all([api.getTopList$idx(3), api.getTopList$idx(1), api.getTopList$idx(2)]);
+        this.topLists = topList.map((list) => list.data.playlist ); 
       },
       handleDetail(playlist){
         this.$store.dispatch('getMusicDetail', playlist);
@@ -160,10 +149,7 @@ import { mapState } from 'vuex';
       },
     },
     created(){
-      this.getHotList();
-      this.getAlbumList();
-      this.getTopList();
-      this.getArtistsList();
+      this.getData();
     }
   }
 </script>
@@ -203,12 +189,12 @@ import { mapState } from 'vuex';
     margin-bottom: 40px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
     &.singed{
       margin: 6px 0 14px 20px;
     }
   }
   .rank-hot{
+    flex: 1 0 140px;
     width: 140px;
     height: 204px;
     margin-right: 35px;
@@ -249,6 +235,7 @@ import { mapState } from 'vuex';
     }
   }
   .rank-album{
+    flex: 1 0 110px;
     width: 110px;
     height: 150px;
     maring-right: 20px;

@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { getMusicUrl } from '../api/api';
+import { api } from '../api/api';
 
   export default {
     name: 'm-play',
@@ -85,7 +85,7 @@ import { getMusicUrl } from '../api/api';
         this.value = 0;
         this.isPlay = false;
         let { id } = this.playTracks[index];
-        let { data : { data: [ {url} ] } } = await getMusicUrl(id);
+        let { data : { data: [ {url} ] } } = await api.getMusicUrl$id(id);
         this.musicAudio.src = url;
       },
       setVolume(val){

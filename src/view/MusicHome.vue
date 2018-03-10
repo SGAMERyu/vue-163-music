@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { getBanner } from '../api/api';
+import { api } from '../api/api';
 import MusciRank from '../components/MusicRank';
 
   export default {
@@ -26,11 +26,14 @@ import MusciRank from '../components/MusicRank';
         banners: []
       }
     },
+    methods: {
+      async getBanner(){
+        const { data: { banners } } = await api.getBanner();
+        this.banners = banners;
+      }
+    },
     created(){
-      getBanner()
-      .then((result)=>{
-        this.banners = result.data.banners;
-      })
+      this.getBanner();
     },
     components: {
       'm-rank': MusciRank
