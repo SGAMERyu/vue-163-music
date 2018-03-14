@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <m-menu></m-menu>
+    <m-menu v-if="!player "></m-menu>
     <router-view></router-view>
     <m-play></m-play>
   </div>
@@ -12,6 +12,20 @@ import play from './components/MusicPlay';
 
 export default {
   name: 'App',
+  data(){
+    return {
+      player: false
+    }
+  },
+  watch: {
+    '$route'(to, from){
+      if(to.name === "player"){
+        this.player = true
+      }else{
+        this.player = false;
+      }
+    }
+  },
   components: {
     'm-menu': menu,
     'm-play': play
