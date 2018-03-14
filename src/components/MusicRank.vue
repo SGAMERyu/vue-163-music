@@ -16,7 +16,7 @@
         <router-link to="playlist" class="rank-more">更多</router-link>
       </div>
       <div class="rank-area">
-        <div v-for="(hot, index) in hotList" :key="index" class="rank-hot">
+        <div v-for="(hot, index) in hotList" :key="index" class="rank-hot" @click.stop="handlePlayList(hot)">
           <div class="hot-meta">
             <img :src="hot.picUrl" alt="" srcset="">
             <div class="hot-meta-bottom">
@@ -147,6 +147,9 @@ import { mapState } from 'vuex';
       handleAllSong(index){
         this.$store.commit('getTracks', this.topLists[index].tracks);  
       },
+      handlePlayList(playlist){
+        this.$router.push({name: 'playlist', query: { id: playlist.id }});
+      }
     },
     created(){
       this.getData();
