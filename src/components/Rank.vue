@@ -16,19 +16,7 @@
         <router-link to="playlist" class="rank-more">更多</router-link>
       </div>
       <div class="rank-area">
-        <div v-for="(hot, index) in hotList" :key="index" class="rank-hot" @click.stop="handlePlayList(hot)">
-          <div class="hot-meta">
-            <img :src="hot.picUrl" alt="" srcset="">
-            <div class="hot-meta-bottom">
-              <span><i class="fas fa-headphones fa-sm"></i></span>
-              <span>{{hot.playCount}}</span>
-              <span @click.stop="handleDetail(hot)"><i class="far fa-play-circle fa-sm"></i></span>
-              </div>
-          </div>
-          <div class="hot-bottom">
-            <p>{{hot.name}}</p>
-          </div>
-        </div>
+        <m-playlist :playData="hotLists" v-on:setTracks="handlePlayList"></m-playlist>
       </div>
       <div class="rank-nav">
         <router-link to="album" class="rank-title">
@@ -99,6 +87,7 @@
 <script>
 import { api } from '../api/api';
 import { mapState } from 'vuex';
+import playlist from './playlist';
 
   export default {
     name: 'm-rank',
@@ -111,14 +100,10 @@ import { mapState } from 'vuex';
         artistsLists: []
       }
     },
+    components: {
+      'm-playlist': playlist,
+    },
     computed: {
-      hotList(){
-        return this.hotLists.slice(0, 8).map(list => { 
-          let playCount = list.playCount / Math.pow(10, 4); 
-          playCount > 10 ? list.playCount = String(playCount).replace(/\.\d+/, '万') : '';
-          return list;
-        })
-      },
       topList(){
         let tracks = [];
         this.topLists.forEach((top, index) => {
@@ -135,7 +120,7 @@ import { mapState } from 'vuex';
         const topList = await Promise.all([api.getTopList$idx(3), api.getTopList$idx(1), api.getTopList$idx(2)]);
         this.topLists = topList.map((list) => list.data.playlist ); 
       },
-      handleDetail(playlist){
+      handlePlayList(playlist){
         this.$store.dispatch('getMusicDetail', playlist);
       },
       handlePlay(play){
@@ -147,9 +132,6 @@ import { mapState } from 'vuex';
       handleAllSong(index){
         this.$store.commit('getTracks', this.topLists[index].tracks);  
       },
-      handlePlayList(playlist){
-        this.$router.push({name: 'playlist', query: { id: playlist.id }});
-      }
     },
     created(){
       this.getData();
@@ -192,9 +174,6 @@ import { mapState } from 'vuex';
     margin-bottom: 40px;
     display: flex;
     flex-wrap: wrap;
-    &.singed{
-      margin: 6px 0 14px 20px;
-    }
   }
   .rank-hot{
     flex: 1 0 140px;

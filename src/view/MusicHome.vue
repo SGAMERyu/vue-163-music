@@ -17,7 +17,7 @@
 
 <script>
 import { api } from '../api/api';
-import MusciRank from '../components/MusicRank';
+import Rank from '../components/Rank';
 
   export default {
     name: 'Home',
@@ -36,7 +36,7 @@ import MusciRank from '../components/MusicRank';
       this.getBanner();
     },
     components: {
-      'm-rank': MusciRank
+      'm-rank': Rank
     }
   }
 </script>

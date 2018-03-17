@@ -1,20 +1,29 @@
 <template>
   <div id="app">
-    <m-menu v-if="!player "></m-menu>
-    <router-view></router-view>
-    <m-play></m-play>
+    <m-loading v-if="false"></m-loading>
+    <div class="container" v-else>
+      <m-menu v-if="!player "></m-menu>
+      <router-view></router-view>
+      <m-play></m-play>
+    </div>
   </div>
 </template>
 
 <script>
-import menu from './components/MusicMenu';
-import play from './components/MusicPlay';
+import menu from './components/Menu';
+import play from './components/Play';
+import loading from './components/Loading';
 
 export default {
   name: 'App',
   data(){
     return {
       player: false
+    }
+  },
+  computed: {
+    isLoading(){
+      return this.$store.state.isLoading;
     }
   },
   watch: {
@@ -28,8 +37,9 @@ export default {
   },
   components: {
     'm-menu': menu,
-    'm-play': play
-}
+    'm-play': play,
+    'm-loading': loading
+  }
 }
 </script>
 
