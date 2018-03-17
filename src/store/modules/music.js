@@ -3,7 +3,7 @@ import { api } from '../../api/api';
 const music = {
   state: {
     tracks: [],
-    playIndex: 0,
+    playIndex: -1,
     playUrl: "",
     isPlay: false,
     playTime: '00 : 00',

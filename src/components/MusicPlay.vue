@@ -108,13 +108,14 @@ export default {
     },
     playTracks(val) {
       this.playIndex = 0;
-      this.setUrl();
+      //this.setUrl();
     },
     isPlay(val) {
       val ? this.musicAudio.play() : this.musicAudio.pause();
     },
     playIndex(val, oldval){
-      val !== -1 ? this.setUrl() : this.musicAudio.pause();
+      this.setUrl();
+      //val !== -1 ? this.setUrl() : this.musicAudio.pause();
     }
   },
   methods: {

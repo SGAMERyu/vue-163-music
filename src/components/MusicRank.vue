@@ -22,7 +22,7 @@
             <div class="hot-meta-bottom">
               <span><i class="fas fa-headphones fa-sm"></i></span>
               <span>{{hot.playCount}}</span>
-              <span @click="handleDetail(hot)"><i class="far fa-play-circle fa-sm"></i></span>
+              <span @click.stop="handleDetail(hot)"><i class="far fa-play-circle fa-sm"></i></span>
               </div>
           </div>
           <div class="hot-bottom">

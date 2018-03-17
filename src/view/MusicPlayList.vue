@@ -12,10 +12,13 @@
                   <span class="btn-1">{{creator.nickname}}</span>
                   <span class="btn-1">{{playlist.createTime}} 创建</span>
                   <div class="info-meta">
-                    <span class="btn-2"><i class="far fa-play-circle"></i>播放</span>
-                    <span class="btn-2"><i class="far fa-folder"></i>0</span>
-                    <span class="btn-2"><i class="fas fa-download">0</i></span>
-                    <span class="btn-2"><i class="far fa-comment-alt"></i>0</span>
+                    <span class="btn-2" @click="handlePlay"><i class="far fa-play-circle"></i>播放</span>
+                    <span class="btn-2"><i class="far fa-folder"></i>{{playlist.subscribedCount}}</span>
+                    <span class="btn-2"><i class="fas fa-share-square"></i>{{
+                      playlist.shareCount
+                    }}</span>
+                    <span class="btn-2"><i class="fas fa-download"></i>下载</span>
+                    <span class="btn-2"><i class="far fa-comment-alt"></i>{{playlist.commentCount}}</span>
                   </div>
                   <div class="info-title">
                     <span class="btn-3">标签:</span>
@@ -27,8 +30,46 @@
                   </div>
                 </div>
             </div>
+            <div class="playlist-tracks">
+              <div class="track-meta">
+                <div>歌曲列表 <span>{{playlist.trackCount}}首歌</span></div>
+                <div>播放: {{playlist.playCount}} 次</div>
+              </div>
+              <ul class="track-list">
+                <li class="track-item">
+                  <div class="item-info">歌曲标题</div>
+                  <div class="item-info">歌手</div>
+                  <div class="item-info">专辑</div>
+                  <div class="item-info">操作</div>
+                </li>
+                <li class="track-item" v-for="(track, index) in playlist.tracks" :key="index">
+                  <div class="item-info">
+                    <span>{{index + 1}}</span>
+                    {{track.name}}
+                  </div>
+                  <div class="item-info">{{track.ar[0].name}}</div>
+                  <div class="item-info">{{track.al.name}}</div>
+                  <div class="item-info">
+                    <span class="far fa-play-circle" @click="handleSong(track)"></span>
+                    <span class="fas fa-plus"></span>
+                    <span class="fas fa-download"></span>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </sg-col>
-          <sg-col :col="6">123</sg-col>
+          <sg-col :col="6" class="playlist-aside">
+            <div>热门歌单</div>
+            <ul>
+              <li class="playlist-hot" v-for="(hot, index) in toplist" :key="index">
+                <img :src="hot.coverImgUrl" class="hot-img">
+                <div class="hot-info">
+                  <p class="hot-name">{{hot.name}}</p>
+                  <p class="hot-author">by {{hot.creator.nickname}}</p>
+                </div>
+              </li>
+            </ul>
+          </sg-col>
         </sg-row>
       </sg-col>
     </sg-row>
@@ -44,7 +85,18 @@ export default {
     data(){
       return {
         playlist: {},
-        creator: {}
+        creator: {},
+        toplist: [],
+      }
+    },
+    computed: {
+      playTracks: {
+        get(){
+          return this.$store.state.music.tracks;
+        },
+        set(value){
+          this.$store.commit('getTracks', value);
+        }
       }
     },
     methods: {
@@ -54,14 +106,25 @@ export default {
         this.playlist = playlist;
         this.creator = playlist.creator;
       },
+      async getTopPlaylist(limit){
+        const { data: { playlists }} = await api.getTopPlaylist$limit(limit, {order: 'hot'}, true);
+        this.toplist = playlists;
+      },
       formatDate(now){
         const date = new Date(now);
         return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+      },
+      handlePlay(){
+        this.playTracks = this.playlist.tracks;
+      },
+      handleSong(track){
+        this.$store.dispatch('getSongDetail', track);
       }
     },
     created(){
       const { query: { id }} = this.$route;
       this.getMusicDetail(id);
+      this.getTopPlaylist(10);
     }
   }  
 </script>
@@ -72,11 +135,18 @@ export default {
       padding: 47px 30px 40px 39px;
       & .playlist-meta{
         display: flex;
+        & .meta-img{
+          width: 200px;
+          height: 200px;
+          border: 4px solid #fff;
+          outline: 1px solid #d5d5d5;
+        }
         & .playlist-info{
           margin-left: 20px;
           & h1{
             line-height: 24px;
             font-size: 20px;
+            margin-bottom: 10px;
           }
           & .btn-1{
             display: inline-block;
@@ -97,7 +167,7 @@ export default {
               border: 1px solid red;
               text-align: center;
               padding: 0 10px;
-              Letter-spacing: 5px;
+              margin-right: 15px;
             }
           }
           & .info-title{
@@ -114,17 +184,68 @@ export default {
             }
           }
           & .info-desc{
-            margin-top: 4px;
+            margin-top: 14px;
             line-height: 18px;
             font-size: 12px;
             color: #666;
           }
         }
-        & .meta-img{
-          width: 200px;
-          height: 200px;
-          border: 4px solid #fff;
-          outline: 1px solid #d5d5d5;
+      }
+      & .playlist-tracks{
+        margin-top: 30px;
+        & .track-meta{
+          display: flex;
+          justify-content: space-between;
+        }
+        & .track-list{
+          margin-top: 15px;
+          border: 1px solid #d9d9d9;
+          margin-bottom: 50px;
+          & .track-item{
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            &:nth-of-type(odd){
+                background: #e8e8e8;
+            }
+            & .item-info {
+              flex: 1 0 auto;
+              padding: 0 10px;
+              width: 25%;
+              height: 30px;
+              line-height: 30px;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              & span{
+                color: #333;
+              }
+            }
+          }
+        }
+      }
+    }
+    & .playlist-aside{
+      padding: 47px 30px 40px 39px;
+      & .playlist-hot{
+        width: 200px;
+        height: 50px;
+        line-height: 24px;
+        font-size: 12px;
+        margin-top: 25px;
+        & .hot-img{
+          float: left;
+          width: 50px;
+          height: 50px;
+        }
+        & .hot-info{
+          margin-left: 62px;
+          line-height: 24px;
+          & .hot-name{
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
         }
       }
     }
