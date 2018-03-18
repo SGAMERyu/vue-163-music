@@ -1,12 +1,12 @@
 <template>
-  <div class="m-playlist">
+  <div class="m-playDetail">
     <sg-row>
       <sg-col :col="18" :offset="3">
         <sg-row :gutter="15">
-          <sg-col :col="18" class="playlist-main">
-            <div class="playlist-meta">
+          <sg-col :col="18" class="playDetail-main">
+            <div class="playDetail-meta">
                 <img class="meta-img" :src="playlist.coverImgUrl" alt="">
-                <div class="playlist-info">
+                <div class="playDetail-info">
                   <h1>{{playlist.name}}</h1>
                   <span class="btn-1"><img :src="creator.avatarUrl" alt=""></span>
                   <span class="btn-1">{{creator.nickname}}</span>
@@ -30,7 +30,7 @@
                   </div>
                 </div>
             </div>
-            <div class="playlist-tracks">
+            <div class="playDetail-tracks">
               <div class="track-meta">
                 <div>歌曲列表 <span>{{playlist.trackCount}}首歌</span></div>
                 <div>播放: {{playlist.playCount}} 次</div>
@@ -58,10 +58,10 @@
               </ul>
             </div>
           </sg-col>
-          <sg-col :col="6" class="playlist-aside">
+          <sg-col :col="6" class="playDetail-aside">
             <div>热门歌单</div>
             <ul>
-              <li class="playlist-hot" v-for="(hot, index) in toplist" :key="index">
+              <li class="playDetail-hot" v-for="(hot, index) in toplist" :key="index">
                 <img :src="hot.coverImgUrl" class="hot-img">
                 <div class="hot-info">
                   <p class="hot-name">{{hot.name}}</p>
@@ -130,10 +130,10 @@ export default {
 </script>
 
 <style lang="scss">
-  .m-playlist{
-    & .playlist-main{
+  .m-playDetail{
+    & .playDetail-main{
       padding: 47px 30px 40px 39px;
-      & .playlist-meta{
+      & .playDetail-meta{
         display: flex;
         & .meta-img{
           width: 200px;
@@ -141,7 +141,7 @@ export default {
           border: 4px solid #fff;
           outline: 1px solid #d5d5d5;
         }
-        & .playlist-info{
+        & .playDetail-info{
           margin-left: 20px;
           & h1{
             line-height: 24px;
@@ -164,10 +164,22 @@ export default {
               min-width: 32px;
               height: 31px;
               line-height: 30px;
-              border: 1px solid red;
+              border: 1px solid #c9c9c9;
               text-align: center;
               padding: 0 10px;
               margin-right: 15px;
+              background: #ededed;
+              color: #333;
+              font-size: 14px;
+              cursor: pointer;
+              &:nth-of-type(1){
+                background: #c20c0c;
+                border: 1px solid #c20c0c;
+                color: #fff;
+              }
+              & i {
+                margin-right: 10px;
+              }
             }
           }
           & .info-title{
@@ -191,7 +203,7 @@ export default {
           }
         }
       }
-      & .playlist-tracks{
+      & .playDetail-tracks{
         margin-top: 30px;
         & .track-meta{
           display: flex;
@@ -225,9 +237,9 @@ export default {
         }
       }
     }
-    & .playlist-aside{
+    & .playDetail-aside{
       padding: 47px 30px 40px 39px;
-      & .playlist-hot{
+      & .playDetail-hot{
         width: 200px;
         height: 50px;
         line-height: 24px;

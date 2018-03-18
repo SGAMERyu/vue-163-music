@@ -26,16 +26,7 @@
         <router-link to="album" class="rank-more">更多</router-link>
       </div>
       <div class="rank-area">
-        <div v-for="(album, index) in albumLists" :key="index" class="rank-album">
-          <div class="album-meta">
-            <img :src="album.picUrl" alt="">
-            <span @click="handlePlay(album)" class="album-play"><i class="far fa-play-circle fa-sm"></i></span>
-          </div>
-          <div class="album-bottom">
-            <p>{{album.name}}</p>
-            <p>{{album.artist.name}}</p>
-          </div>
-        </div>
+        <m-albumlist :albumlist="albumLists" v-on:setTracks="handlePlayList"></m-albumlist>
       </div>
       <div class="rank-nav">
         <router-link to="toplist" class="rank-title">
@@ -88,20 +79,21 @@
 import { api } from '../api/api';
 import { mapState } from 'vuex';
 import playlist from './playlist';
+import albumlist from './alubumlist';
 
   export default {
     name: 'm-rank',
-    data(){
-      return {
-        homeData: [],
-        topLists: [],
-        hotLists: [],
-        albumLists: [],
-        artistsLists: []
-      }
-    },
+    props: ['homeData', 'topLists'],  
     components: {
       'm-playlist': playlist,
+      'm-albumlist': albumlist
+    },
+    data(){
+      return {
+        hotLists: [],
+        albumLists: [],
+        artistsLists: [],
+      }
     },
     computed: {
       topList(){
@@ -113,13 +105,16 @@ import playlist from './playlist';
         return tracks;
       },
     },
+    watch: {
+      homeData(val){
+        [
+          { data: { result: this.hotLists } }, 
+          { data: { albums: this.albumLists} }, 
+          { data: { artists: this.artistsLists } }
+        ] = val;
+      }
+    },
     methods: {
-      async getData(){
-        [{data: { result: this.hotLists } }, { data: { albums: this.albumLists} }, { data: { artists: this.artistsLists } }] = await Promise.all([api.getPersonalized(), api.getTopAlbum$offset(0, {limit: 5}, true), api.getTopArtists$offset(0, {limit: 5}, true)])
-
-        const topList = await Promise.all([api.getTopList$idx(3), api.getTopList$idx(1), api.getTopList$idx(2)]);
-        this.topLists = topList.map((list) => list.data.playlist ); 
-      },
       handlePlayList(playlist){
         this.$store.dispatch('getMusicDetail', playlist);
       },
@@ -133,9 +128,6 @@ import playlist from './playlist';
         this.$store.commit('getTracks', this.topLists[index].tracks);  
       },
     },
-    created(){
-      this.getData();
-    }
   }
 </script>
 
@@ -174,84 +166,6 @@ import playlist from './playlist';
     margin-bottom: 40px;
     display: flex;
     flex-wrap: wrap;
-  }
-  .rank-hot{
-    flex: 1 0 140px;
-    width: 140px;
-    height: 204px;
-    margin-right: 35px;
-    cursor: pointer;
-    & .hot-meta{
-      width: 140px;
-      height: 140px;
-      position: relative;
-      & img{
-        max-width: 100%;
-        max-height: 100%;
-      }
-      & .hot-meta-bottom{
-        position: absolute;
-        bottom: 0%;
-        left: 0%;
-        width: 100%;
-        height: 27px;
-        line-height: 27px;
-        color: #ccc;
-        font-size: 12px;
-        padding: 0 8px;
-        display: flex;
-        align-item: center;
-        background: rgba(0, 0, 0, 0.5);
-        & span:nth-of-type(1){
-          margin-right: 10px;
-        }
-        & span:nth-of-type(3){
-          margin-left: auto;
-          cursor: pointer;
-        }
-      }
-    }
-    & .hot-bottom{
-      margin: 8px 0 3px;
-      font-size: 14px;
-    }
-  }
-  .rank-album{
-    flex: 1 0 110px;
-    width: 110px;
-    height: 150px;
-    maring-right: 20px;
-    cursor: pointer;
-    & .album-meta{
-      width: 100px;
-      height: 100px;
-      position: relative;
-      &:hover{
-        & .album-play{
-          display: block;
-        }
-      }
-      & img{
-        max-width: 100%;
-        max-height: 100%;
-      }
-      & .album-play{
-        position: absolute;
-        right: 10px;
-        bottom: 5px;
-        color: #fff;
-        display: none;
-      }
-    }
-
-    & .album-bottom{
-      font-size: 12px;
-      width: 100px;
-      overflow: hidden;
-      & p:nth-of-type(2){
-        color: #666;
-      }
-    }
   }
   .rank-top{
     flex: 1 0 auto;

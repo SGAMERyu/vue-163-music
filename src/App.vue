@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <m-loading v-if="false"></m-loading>
-    <div class="container" v-else>
+    <m-loading v-show="isLoading"></m-loading>
+    <div class="container" v-show="!isLoading">
       <m-menu v-if="!player "></m-menu>
       <router-view></router-view>
       <m-play></m-play>

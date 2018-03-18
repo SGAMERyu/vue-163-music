@@ -9,7 +9,7 @@
       </sg-carousel>
     </sg-col>
     <sg-col :col="18" :offset="3" class="home-rank">
-      <m-rank></m-rank>
+      <m-rank :homeData="homeData" :topLists="topData"></m-rank>
     </sg-col>
   </sg-row>
 </div>
@@ -23,17 +23,35 @@ import Rank from '../components/Rank';
     name: 'Home',
     data(){
       return {
-        banners: []
+        banners: [],
+        homeData: [],
+        topData: []
       }
     },
     methods: {
-      async getBanner(){
+      async getData(){
         const { data: { banners } } = await api.getBanner();
         this.banners = banners;
+
+        this.homeData = await Promise.all([
+          api.getPersonalized(), 
+          api.getTopAlbum$offset(0, {limit: 5}, true), 
+          api.getTopArtists$offset(0, {limit: 5}, true)
+        ]);
+
+        const topData = await Promise.all([
+          api.getTopList$idx(3), 
+          api.getTopList$idx(1), 
+          api.getTopList$idx(2)
+        ])
+
+        this.topData = topData.map((list) => list.data.playlist );
+
+        this.$store.commit('initData', false);
       }
     },
     created(){
-      this.getBanner();
+      this.getData();
     },
     components: {
       'm-rank': Rank

@@ -53,7 +53,6 @@
     flex-wrap: wrap;
     margin-left: -42px;
     & .playlist-list{
-      flex: 1 0 140px;
       max-width: 182px;
       height: 204px;
       padding-left: 42px;
