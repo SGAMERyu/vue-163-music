@@ -1,36 +1,13 @@
 <template>
-  <div class="m-playDetail">
+  <div>
     <sg-row>
       <sg-col :col="18" :offset="3">
-        <sg-row :gutter="15">
-          <sg-col :col="18" class="playDetail-main">
-            <div class="playDetail-meta">
-                <img class="meta-img" :src="playlist.coverImgUrl" alt="">
-                <div class="playDetail-info">
-                  <h1>{{playlist.name}}</h1>
-                  <span class="btn-1"><img :src="creator.avatarUrl" alt=""></span>
-                  <span class="btn-1">{{creator.nickname}}</span>
-                  <span class="btn-1">{{playlist.createTime}} 创建</span>
-                  <div class="info-meta">
-                    <span class="btn-2" @click="handlePlay"><i class="far fa-play-circle"></i>播放</span>
-                    <span class="btn-2"><i class="far fa-folder"></i>{{playlist.subscribedCount}}</span>
-                    <span class="btn-2"><i class="fas fa-share-square"></i>{{
-                      playlist.shareCount
-                    }}</span>
-                    <span class="btn-2"><i class="fas fa-download"></i>下载</span>
-                    <span class="btn-2"><i class="far fa-comment-alt"></i>{{playlist.commentCount}}</span>
-                  </div>
-                  <div class="info-title">
-                    <span class="btn-3">标签:</span>
-                    <span class="btn-3" v-for="(tag, index) in playlist.tags" :key="index">{{tag}}</span>
-                  </div>
-                  <div class="info-desc">
-                    <span>介绍: </span>
-                    <span>{{playlist.description}}</span>
-                  </div>
-                </div>
-            </div>
-            <div class="playDetail-tracks">
+        <sg-row>
+          <sg-col :col="18">
+            <div class="m-playDetail">
+              <detail-head :detailData="playlist" v-on:setTracks="handlePlay"></detail-head>
+              <detail-song :songData="playlist.tracks"></detail-song>
+            <!--<div class="playDetail-tracks">
               <div class="track-meta">
                 <div>歌曲列表 <span>{{playlist.trackCount}}首歌</span></div>
                 <div>播放: {{playlist.playCount}} 次</div>
@@ -56,6 +33,7 @@
                   </div>
                 </li>
               </ul>
+            </div>-->
             </div>
           </sg-col>
           <sg-col :col="6" class="playDetail-aside">
@@ -79,15 +57,20 @@
 
 <script>
 import { api } from '../api/api';
+import detailHead from '../components/DetailHead.vue';
+import detailSong from '../components/DetailSong.vue';
 
 export default {
     name: 'playlist',
     data(){
       return {
         playlist: {},
-        creator: {},
         toplist: [],
       }
+    },
+    components: {
+      'detail-head': detailHead,
+      'detail-song': detailSong
     },
     computed: {
       playTracks: {
@@ -104,7 +87,6 @@ export default {
         const { data: { playlist } } = await api.getPlaylistDetail$id(id)
         playlist.createTime = this.formatDate(playlist.createTime);
         this.playlist = playlist;
-        this.creator = playlist.creator;
       },
       async getTopPlaylist(limit){
         const { data: { playlists }} = await api.getTopPlaylist$limit(limit, {order: 'hot'}, true);
@@ -131,8 +113,8 @@ export default {
 
 <style lang="scss">
   .m-playDetail{
-    & .playDetail-main{
-      padding: 47px 30px 40px 39px;
+    padding: 47px 30px 40px 39px;
+    background: #fff;
       & .playDetail-meta{
         display: flex;
         & .meta-img{
@@ -236,9 +218,10 @@ export default {
           }
         }
       }
-    }
-    & .playDetail-aside{
+  }
+    .playDetail-aside{
       padding: 47px 30px 40px 39px;
+      background: #fff;
       & .playDetail-hot{
         width: 200px;
         height: 50px;
@@ -261,6 +244,5 @@ export default {
         }
       }
     }
-  }
 </style>
 

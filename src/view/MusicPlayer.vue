@@ -29,6 +29,7 @@
                   <span class="far fa-pause-circle" v-show="isPlay && index === playIndex" @click="handlePlay(index)"></span>
                   <span class="fas fa-plus"></span>
                   <span class="far fa-trash-alt"></span>
+                  <span class="far fa"></span>
                 </div>
               </li>
             </ul>
