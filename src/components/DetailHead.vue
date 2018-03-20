@@ -92,6 +92,7 @@
       return {
         type: 'default',
         info: {},
+        clicked: false
       }
     },
     props: ['detailData'],

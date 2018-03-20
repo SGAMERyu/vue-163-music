@@ -11,7 +11,6 @@ const music = {
   },
   mutations: {
     getTracks(state, tracks){
-      state.playIndex = -1;
       state.tracks = tracks;
     },
     setIndex(state,  index ){

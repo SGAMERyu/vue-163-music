@@ -6,7 +6,7 @@
           <sg-col :col="18">
             <div class="m-albumDetail">
               <detail-head :detailData="albumDetail" v-on:setTracks="handlePlay"></detail-head>
-              <detail-song :songData="albumSongs" v-on:setTracks="handleSong"></detail-song>
+              <detail-song :songData="albumSongs"></detail-song>
             </div>
           </sg-col>
         </sg-row>
@@ -41,9 +41,6 @@
       },
       handlePlay(){
         this.$store.commit('getTracks', this.albumSongs);
-      },
-      handleSong(track){
-        this.$store.commit('getTracks', [ track ]);
       }
     },
     created(){

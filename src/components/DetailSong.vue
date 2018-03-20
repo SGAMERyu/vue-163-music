@@ -54,7 +54,7 @@
         return `${minute} : ${second}`;
       },
       setTracks(song){
-        this.$emit('setTracks', song);
+        this.$store.commit('getTracks', [ song ]);
       }
     }
   }  
