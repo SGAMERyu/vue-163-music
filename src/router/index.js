@@ -4,6 +4,8 @@ import MusicHome from '../view/MusicHome.vue';
 import MusicPlayer from '../view/MusicPlayer.vue';
 import MusicPlayList from '../view/MusicPlayList.vue';
 import MusicAlbum from '../view/MusicAlbum.vue';
+import MusicSong from '../view/MusicSong.vue';
+
 Vue.use(Router)
 
 export default new Router({
@@ -27,6 +29,11 @@ export default new Router({
       path: '/album',
       name: 'album',
       component: MusicAlbum
+    },
+    {
+      path: '/song',
+      name: 'song',
+      component: MusicSong 
     }
   ]
 })

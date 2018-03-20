@@ -48,7 +48,7 @@
             </div>
           </div>
           <ul class="top-list" type="1">
-            <li v-for="(track, index) in topList[index]" :key="index">
+            <li v-for="(track, index) in topList[index]" :key="index" @click.stop="handleDetail(track)">
               <span class="list-type" :class="{'top': index + 1 <= 3}">{{index + 1}}</span>
               <span class="list-name">{{track.name}}</span>
               <div class="oper">
@@ -127,6 +127,9 @@ import albumlist from './alubumlist';
       handleAllSong(index){
         this.$store.commit('getTracks', this.topLists[index].tracks);  
       },
+      handleDetail(song){
+        this.$router.push({name: 'song', query: { id: song.id }});
+      }
     },
   }
 </script>

@@ -48,7 +48,7 @@ import Rank from '../components/Rank';
         this.topData = topData.map((list) => list.data.playlist );
 
         this.$store.commit('initData', false);
-      }
+      },
     },
     created(){
       this.getData();

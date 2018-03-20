@@ -5,8 +5,8 @@
         <sg-row>
           <sg-col :col="18">
             <div class="m-albumDetail">
-              <detail-head :detailData="albumDetail"></detail-head>
-              <detail-song :songData="albumSongs"></detail-song>
+              <detail-head :detailData="albumDetail" v-on:setTracks="handlePlay"></detail-head>
+              <detail-song :songData="albumSongs" v-on:setTracks="handleSong"></detail-song>
             </div>
           </sg-col>
         </sg-row>
@@ -38,6 +38,12 @@
         const { data } = await api.getAlbum$id(id);
         this.albumDetail = data.album;
         this.albumSongs = data.songs
+      },
+      handlePlay(){
+        this.$store.commit('getTracks', this.albumSongs);
+      },
+      handleSong(track){
+        this.$store.commit('getTracks', [ track ]);
       }
     },
     created(){

@@ -3,7 +3,7 @@
     <div class="albumlist-list" v-for="(album, index) in albumlist" :key="index" @click.stop="handleDetail(album)">
       <div class="albumlist-meta">
         <img :src="album.picUrl">
-        <span class="albumlist-play" @click="handlePlay(album)"><i class="far fa-play-circle fa-sm"></i></span>
+        <span class="albumlist-play" @click.stop="handlePlay(album)"><i class="far fa-play-circle fa-sm"></i></span>
       </div>
       <div class="albumlist-bottom">
         <p>{{album.name}}</p>

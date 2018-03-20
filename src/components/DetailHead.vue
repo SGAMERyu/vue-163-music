@@ -55,6 +55,33 @@
         <p>{{detailData.description}}</p>
       </div>
     </div>
+    <div class="detail-container" v-else>
+      <img class="detail-img" :src="info.picUrl" alt="">
+      <div class="detail-info">
+        <h2>{{detailData.name}}</h2>
+        <p>
+          <span>歌手: </span> 
+          <span>{{info.author}}</span>
+        </p>
+        <p>
+          <span>专辑: </span>
+          <span>{{info.album}}</span>
+        </p>
+        <div  class="detail-toolbar">
+          <span class="btn" @click="setTracks"><i class="far fa-play-circle"></i>播放</span>
+          <span class="btn"><i class="far fa-folder"></i>收藏{{detailData.subscribedCount}}</span>
+          <span class="btn"><i class="fas fa-share-square"></i>分享</span>
+          <span class="btn"><i class="fas fa-download"></i>下载</span>
+          <span class="btn"><i class="far fa-comment-alt"></i></span>
+        </div>
+      </div>
+      <div class="detail-desc">
+        <h3>歌词: </h3>
+        <div class="detail-lyric">
+          <p v-for="(lyric, index) in detailData.lyrics" :key="index">{{lyric}}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -74,6 +101,12 @@
           this.info = this.detailData.info;
         }else if(this.type === 'playlist'){
           this.info = this.detailData.creator;
+        }else{
+          const {
+            al: {name: album, picUrl},
+            ar: [ {name: author} ]
+          } = this.detailData;
+          this.info = {album, author, picUrl};
         }
       }
     },
@@ -93,6 +126,7 @@
     & .detail-container{
       display: flex;
       flex-wrap:  wrap;
+      margin-bottom: 10px;
     }
     & .detail-img{
       max-width: 200px;
@@ -161,8 +195,13 @@
       }
     }
     & .detail-desc{
+      width: 100%;
       margin-top: 40px;
       font-size: 12px;
+      & .detail-lyric{
+        columns: 4 100px;
+        column-gap: 0;
+      }
       & p{
         color: #666;
         line-height: 24px;

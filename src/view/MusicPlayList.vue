@@ -6,34 +6,7 @@
           <sg-col :col="18">
             <div class="m-playDetail">
               <detail-head :detailData="playlist" v-on:setTracks="handlePlay"></detail-head>
-              <detail-song :songData="playlist.tracks"></detail-song>
-            <!--<div class="playDetail-tracks">
-              <div class="track-meta">
-                <div>歌曲列表 <span>{{playlist.trackCount}}首歌</span></div>
-                <div>播放: {{playlist.playCount}} 次</div>
-              </div>
-              <ul class="track-list">
-                <li class="track-item">
-                  <div class="item-info">歌曲标题</div>
-                  <div class="item-info">歌手</div>
-                  <div class="item-info">专辑</div>
-                  <div class="item-info">操作</div>
-                </li>
-                <li class="track-item" v-for="(track, index) in playlist.tracks" :key="index">
-                  <div class="item-info">
-                    <span>{{index + 1}}</span>
-                    {{track.name}}
-                  </div>
-                  <div class="item-info">{{track.ar[0].name}}</div>
-                  <div class="item-info">{{track.al.name}}</div>
-                  <div class="item-info">
-                    <span class="far fa-play-circle" @click="handleSong(track)"></span>
-                    <span class="fas fa-plus"></span>
-                    <span class="fas fa-download"></span>
-                  </div>
-                </li>
-              </ul>
-            </div>-->
+              <detail-song :songData="playlist.tracks" v-on:setTracks="handleSong"></detail-song>
             </div>
           </sg-col>
           <sg-col :col="6" class="playDetail-aside">
@@ -72,16 +45,6 @@ export default {
       'detail-head': detailHead,
       'detail-song': detailSong
     },
-    computed: {
-      playTracks: {
-        get(){
-          return this.$store.state.music.tracks;
-        },
-        set(value){
-          this.$store.commit('getTracks', value);
-        }
-      }
-    },
     methods: {
       async getMusicDetail(id){
         const { data: { playlist } } = await api.getPlaylistDetail$id(id)
@@ -97,7 +60,7 @@ export default {
         return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
       },
       handlePlay(){
-        this.playTracks = this.playlist.tracks;
+        this.$store.commit('getTracks', this.playlist.tracks);
       },
       handleSong(track){
         this.$store.dispatch('getSongDetail', track);

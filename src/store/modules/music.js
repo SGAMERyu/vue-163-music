@@ -1,4 +1,5 @@
 import { api } from '../../api/api';
+import { stat } from 'fs';
 
 const music = {
   state: {
@@ -10,6 +11,7 @@ const music = {
   },
   mutations: {
     getTracks(state, tracks){
+      state.playIndex = -1;
       state.tracks = tracks;
     },
     setIndex(state,  index ){

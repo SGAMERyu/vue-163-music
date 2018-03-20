@@ -15,7 +15,7 @@
         <div class="songlist-number">{{index}}</div>
         <div class="songlist-name" :class="{isPlaylist: $route.name === 'playlist'}">{{song.name}}</div>
         <div class="songlist-menu">
-          <span class="far fa-play-circle fa-lg"></span>
+          <span class="far fa-play-circle fa-lg" @click="setTracks(song)"></span>
           <span class="fas fa-plus"></span>
           <span class="fas fa-download"></span>
         </div>
@@ -52,6 +52,9 @@
         minute = minute >= 10 ? minute : `0${minute}`;
         second = second >= 10 ? second : `0${second}`;
         return `${minute} : ${second}`;
+      },
+      setTracks(song){
+        this.$emit('setTracks', song);
       }
     }
   }  
