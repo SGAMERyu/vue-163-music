@@ -63,14 +63,7 @@
       </div>
     </sg-col>
     <sg-col :col="6">
-      <div class="rank-nav singed">
-        <span>入驻歌手</span>
-        <router-link to="playlist" class="rank-more">查看全部</router-link>
-      </div>
-      <div class="rank-singed" v-for="(artists, index) in artistsLists" :key="index">
-        <img :src="artists.picUrl" alt="" srcset="">
-          <h3 class="singed-name">{{artists.name}}</h3>
-      </div>
+      <m-slidebar title="热门歌单" :slideData="playLists"></m-slidebar>
     </sg-col>
   </sg-row>
 </template>
@@ -80,19 +73,21 @@ import { api } from '../api/api';
 import { mapState } from 'vuex';
 import playlist from './playlist';
 import albumlist from './alubumlist';
+import slidebar from './sliderBar';
 
   export default {
     name: 'm-rank',
     props: ['homeData', 'topLists'],  
     components: {
       'm-playlist': playlist,
-      'm-albumlist': albumlist
+      'm-albumlist': albumlist,
+      'm-slidebar': slidebar
     },
     data(){
       return {
         hotLists: [],
         albumLists: [],
-        artistsLists: [],
+        playLists: [],
       }
     },
     computed: {
@@ -110,7 +105,7 @@ import albumlist from './alubumlist';
         [
           { data: { result: this.hotLists } }, 
           { data: { albums: this.albumLists} }, 
-          { data: { artists: this.artistsLists } }
+          { data: { playlists: this.playLists } }
         ] = val;
       }
     },
@@ -249,28 +244,6 @@ import albumlist from './alubumlist';
           }
         }
       }
-    }
-  }
-  .rank-singed{
-    margin-top: 15px;
-    width: 100%;
-    height: 62px;
-    background: #fafafa;
-    cursor: pointer;
-    & img{
-      max-width: 62px;
-      min-height: 62px;
-      float: left;
-    }
-    & .singed-name{
-      width: calc(100% - 62px);
-      padding-left: 14px;
-      float: left;
-      font-size: 14px;
-      color: #333;
-      height: 62px;
-      border: 1px solid #e9e9e9;
-      padding-top: 8px;
     }
   }
 </style>

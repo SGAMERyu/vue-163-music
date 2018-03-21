@@ -36,7 +36,7 @@ import Rank from '../components/Rank';
         this.homeData = await Promise.all([
           api.getPersonalized(), 
           api.getTopAlbum$offset(0, {limit: 5}, true), 
-          api.getTopArtists$offset(0, {limit: 5}, true)
+          api.getTopPlaylist$limit(10, {order: 'hot'}, true)
         ]);
 
         const topData = await Promise.all([

@@ -1,16 +1,16 @@
 <template>
   <div>
     <sg-row>
-      <sg-col :col="18" :offset="3">
+      <sg-col :col="18" :offset="3" class="m-albumDetail">
         <sg-row>
           <sg-col :col="18">
-            <div class="m-albumDetail">
               <detail-head :detailData="albumDetail" v-on:setTracks="handlePlay"></detail-head>
               <detail-song :songData="albumSongs"></detail-song>
-            </div>
+          </sg-col>
+          <sg-col :col="5" :offset="1">
+            <slidebar title="最新歌单" :slideData="toplist"></slidebar>
           </sg-col>
         </sg-row>
-        <sg-row :col="6"></sg-row>
       </sg-col>
     </sg-row>
   </div>
@@ -20,6 +20,7 @@
   import { api } from '../api/api';
   import detailHead from '../components/DetailHead.vue';
   import detailSong from '../components/DetailSong.vue';
+  import slidebar from '../components/sliderBar.vue';
 
   export default {
     name: 'album',
@@ -27,17 +28,23 @@
       return {
         albumDetail: {},
         albumSongs: {},
+        toplist: []
       }
     },
     components: {
       'detail-head': detailHead,
-      'detail-song': detailSong
+      'detail-song': detailSong,
+      'slidebar': slidebar
     },
     methods: {
       async getAlbumDetail(id){
         const { data } = await api.getAlbum$id(id);
         this.albumDetail = data.album;
         this.albumSongs = data.songs
+      },
+      async getTopPlaylist(limit){
+        const { data: { playlists }} = await api.getTopPlaylist$limit(limit, {order: 'new'}, true);
+        this.toplist = playlists;
       },
       handlePlay(){
         this.$store.commit('getTracks', this.albumSongs);
@@ -46,6 +53,7 @@
     created(){
       const { query: { id } } = this.$route;
       this.getAlbumDetail(id);
+      this.getTopPlaylist(10);
     }
   }
 </script>

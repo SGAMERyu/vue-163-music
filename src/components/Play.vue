@@ -31,6 +31,7 @@
       <span v-if="!isRandom" @click="isRandom = !isRandom" class="fas fa-retweet fa-lg"></span>
       <span v-else @click="isRandom = !isRandom" class="fas fa-random fa-lg"></span>
       <span class="fas fa-list-ul fa-lg"></span>
+    
     </div>
   </sg-col>
   </sg-row>
@@ -107,8 +108,11 @@ export default {
       this.setValue();
     },
     playTracks(val) {
+      if(this.playIndex === 0){
+        console.log(1);
+        this.setUrl()
+      }
       this.playIndex = 0;
-      this.setUrl();
     },
     isPlay(val) {
       val ? this.musicAudio.play() : this.musicAudio.pause();

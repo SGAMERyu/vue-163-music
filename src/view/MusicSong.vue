@@ -1,14 +1,14 @@
 <template>
   <div>
     <sg-row>
-      <sg-col :col="18" :offset="3">
+      <sg-col :col="18" :offset="3" class="m-songDetail">
         <sg-row>
           <sg-col :col="18">
-            <div class="m-songDetail">
-              <detail-head :detailData="song" v-on:setTracks="handlePlay"></detail-head>
-            </div>
+            <detail-head :detailData="song" v-on:setTracks="handlePlay"></detail-head>
           </sg-col>
-          <sg-col :col="6"></sg-col>
+          <sg-col :col="5" :offset="1">
+            <slidebar title="最新歌单" :slideData="toplist"></slidebar>
+          </sg-col>
         </sg-row>
       </sg-col>
     </sg-row>
@@ -19,17 +19,20 @@
   import { api } from '../api/api';
   import detailHead from '../components/DetailHead.vue';
   import detailSong from '../components/DetailSong.vue';
+  import slidebar from '../components/sliderBar.vue';
 
   export default {
     name: 'song',
     data(){
       return {
         song: {},
+        toplist: []
       }
     },
     components: {
       'detail-head': detailHead,
-      'detail-song': detailSong
+      'detail-song': detailSong,
+      'slidebar': slidebar
     },
     methods: {
       async getSongDetail(id){
@@ -40,6 +43,10 @@
          const { data: { lrc: { lyric } } } = await api.getLyric$id(id);
          const result = this.coverLyric(lyric);
          this.$set(this.song, 'lyrics', result);
+      },
+      async getTopPlaylist(limit){
+        const { data: { playlists }} = await api.getTopPlaylist$limit(limit, {order: 'new'}, true);
+        this.toplist = playlists;
       },
       coverLyric(lyric){
         let lines = lyric.split('\n');
@@ -58,6 +65,7 @@
       const { query: { id } } = this.$route;
       this.getSongDetail(id);
       this.getSongLyric(id);
+      this.getTopPlaylist(10);
     }
   }
 </script>
