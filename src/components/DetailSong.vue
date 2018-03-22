@@ -66,7 +66,6 @@
   }
   .songlist-main{
     margin-top: 27px;
-    margin-bottom: 100px;
     & .songlist-title{
       display: flex;
       align-items: center;
