@@ -7,7 +7,7 @@
             <detail-head :detailData="playlist" v-on:setTracks="handlePlay"></detail-head>
             <detail-song :songData="playlist.tracks"></detail-song>
             <detail-comment :commentData="commentlist"></detail-comment>
-            <sg-pagination :total="commentlist.total"></sg-pagination>
+            <sg-pagination :total="commentlist.total" v-on:currentChange="handlePageOffset"></sg-pagination>
           </sg-col>
           <sg-col :col="5" :offset="1">
             <slidebar title="最新歌单" :slideData="toplist"></slidebar>
@@ -61,6 +61,10 @@ export default {
       },
       handlePlay(){
         this.$store.commit('getTracks', this.playlist.tracks);
+      },
+      handlePageOffset(value){
+        const { query: { id }} = this.$route; 
+        this.getCommentPlaylist(id, value);
       }
     },
     created(){

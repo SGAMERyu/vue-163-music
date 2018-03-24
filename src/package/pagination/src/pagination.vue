@@ -1,11 +1,9 @@
 <template>
   <div class="sg-pagination">
     <ul class="sg-pages">
-      <li class="sg-page btn">上一页</li>
-      <li class="sg-page active">1</li>
-      <li class="sg-page">2</li>
-      <li class="sg-page">3</li>
-      <li class="sg-page btn">下一页</li>
+      <li class="sg-page btn" v-show="currentCount > 1" @click="onPrev">上一页</li>
+      <li class="sg-page" v-for="(count, index) in showCount" :key="index" :class="{active: count === currentCount}" @click="handleCurrentPage(count, index)">{{count}}</li>
+      <li class="sg-page btn" v-show="currentCount < countSize" @click="onNext">下一页</li>
     </ul>
   </div>
 </template>
@@ -15,14 +13,16 @@
     name: 'sgPagination',
     data(){
       return {
-        showCount: 0
+        countSize: null,
+        currentCount: null,
+        showCount: [],
       }
     },
     props: {
       total: Number,
       currentPage: {
         type: Number,
-        default: 0
+        default: 1
       },
       pageSize: {
         type: Number,
@@ -30,12 +30,16 @@
       },
       pageCount: {
         type: Number,
-        daefault: 7
+        default: 7
       } 
     },
     watch: {
       total(val){
         this.handlePageCount(val)
+      },
+      currentCount(val){
+        this.handleShowCount(val);
+        this.$emit('currentChange', val);
       }
     },
     methods: {
@@ -46,9 +50,46 @@
         while(remainder > Math.pow(this.pageSize, index)){
           index++;
         } 
-        console.log(count + index);
+        this.countSize = count + index;
+        this.handleShowCount();
+        this.currentCount = this.currentPage;
+      },
+      handleShowCount(count){
+        const length = this.showCount.length;
+        const middleIndex = Math.floor(length / 2);
+        const currentIndex = this.showCount.findIndex((item, index) => item === count);
+        if(!length){
+          this.showCount = Array.from({length: this.pageCount}, (count, index)=>{ return count = index + 1 });
+        }else{
+          if(currentIndex > middleIndex ){
+            if(this.currentCount > this.countSize - middleIndex){
+              let size = this.countSize;
+              this.showCount = this.showCount.map(item => item = size--).reverse();
+            }else{
+              let diff = currentIndex - middleIndex;
+              this.showCount = this.showCount.map(item => item + diff);
+            }
+          }else{
+            if(this.currentCount < middleIndex + 1){
+              let size = this.currentPage;
+              this.showCount = this.showCount.map(item => item = size++)
+            }else{
+              let diff = middleIndex - currentIndex;
+              this.showCount = this.showCount.map(item => item - diff);
+            }
+          }
+        }
+      },
+      handleCurrentPage(count){
+        this.currentCount = count;
+      },
+      onPrev(){
+        this.currentCount--; 
+      },
+      onNext(){
+        this.currentCount++;
       }
-    }
+    },
   }  
 </script>
 
@@ -68,6 +109,7 @@
       border: 1px solid #ddd;
       font-size: 14px;
       color: #999;
+      cursor: pointer;
     }
     & .active{
       border: none;
