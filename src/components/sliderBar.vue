@@ -2,7 +2,7 @@
   <div class="slidebar-main">
     <h3>{{title}}</h3>
     <ul>
-      <li class="slidebar-list" v-for="(item, index) in slideData" :key="index">
+      <li class="slidebar-list" v-for="(item, index) in slideData" :key="index" @click="handleDetail(item)">
         <img class="slidebar-img" :src="item.coverImgUrl" alt="">
         <div class="slidebar-info">
           <p class="slidebar-meta">{{item.name}}</p>
@@ -16,7 +16,12 @@
 <script>
   export default {
     name: 'slidebar',
-    props: ['title', 'slideData']
+    props: ['title', 'slideData'],
+    methods: {
+      handleDetail(item){
+         this.$router.push({name: 'playlist', query: { id: item.id }});
+      }
+    }
   }
 </script>
 
@@ -36,6 +41,7 @@
       line-height: 24px;
       font-size: 12px;
       margin-top: 25px;
+      cursor: pointer;
       & .slidebar-img{
         max-width: 50px;
         max-height: 50px;

@@ -103,11 +103,11 @@
         }else if(this.type === 'playlist'){
           this.info = this.detailData.creator;
         }else{
-          const {
-            al: {name: album, picUrl},
-            ar: [ {name: author} ]
-          } = this.detailData;
-          this.info = {album, author, picUrl};
+          this.info = {
+            album: this.detailData.al.name,
+            picUrl: this.detailData.al.picUrl,
+            author: this.detailData.ar.name
+          }
         }
       }
     },
@@ -136,9 +136,11 @@
       outline: 1px solid #d5d5d5;
     }
     & .detail-info{
+      max-width: calc(100% - 215px);
       font-size: 12px;
-      margin-left: 40px;
+      margin-left: 15px;
       & h2{
+        width: 100%;
         font-size: 20px;
         line-height: 24px;
         font-weight: normal;

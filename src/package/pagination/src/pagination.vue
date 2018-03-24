@@ -33,6 +33,11 @@
         default: 7
       } 
     },
+    computed:{
+      totalSize(){
+        return this.countSize > this.pageCount ? this.pageCount : this.countSize; 
+      }
+    },
     watch: {
       total(val){
         this.handlePageCount(val)
@@ -40,7 +45,7 @@
       currentCount(val){
         this.handleShowCount(val);
         this.$emit('currentChange', val);
-      }
+      },
     },
     methods: {
       handlePageCount(val){
@@ -59,7 +64,7 @@
         const middleIndex = Math.floor(length / 2);
         const currentIndex = this.showCount.findIndex((item, index) => item === count);
         if(!length){
-          this.showCount = Array.from({length: this.pageCount}, (count, index)=>{ return count = index + 1 });
+          this.showCount = Array.from({length: this.totalSize}, (count, index)=>{ return count = index + 1 });
         }else{
           if(currentIndex > middleIndex ){
             if(this.currentCount > this.countSize - middleIndex){

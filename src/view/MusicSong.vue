@@ -5,6 +5,8 @@
         <sg-row>
           <sg-col :col="18">
             <detail-head :detailData="song" v-on:setTracks="handlePlay"></detail-head>
+            <detail-comment :commentData="commentlist"></detail-comment>
+              <sg-pagination :total="commentlist.total" v-on:currentChange="getCommentSong"></sg-pagination>
           </sg-col>
           <sg-col :col="5" :offset="1">
             <slidebar title="最新歌单" :slideData="toplist"></slidebar>
@@ -20,33 +22,47 @@
   import detailHead from '../components/DetailHead.vue';
   import detailSong from '../components/DetailSong.vue';
   import slidebar from '../components/sliderBar.vue';
+  import detailComment from '../components/detailComment.vue';
 
   export default {
     name: 'song',
     data(){
       return {
+        id: null,
         song: {},
-        toplist: []
+        toplist: [],
+        commentlist: []
       }
     },
     components: {
       'detail-head': detailHead,
       'detail-song': detailSong,
-      'slidebar': slidebar
+      'detail-comment': detailComment,
+      'slidebar': slidebar,
     },
     methods: {
-      async getSongDetail(id){
-        const { data: { songs: [ song ]} } = await api.getSongDetail$ids(id);
-        this.song = song;
+      async getCommentSong(offset){
+        const { data }= await api.getCommentMusic$id(this.id, {offset: offset}, true);
+        this.commentlist = data;
       },
-      async getSongLyric(id){
-         const { data: { lrc: { lyric } } } = await api.getLyric$id(id);
-         const result = this.coverLyric(lyric);
-         this.$set(this.song, 'lyrics', result);
-      },
-      async getTopPlaylist(limit){
-        const { data: { playlists }} = await api.getTopPlaylist$limit(limit, {order: 'new'}, true);
-        this.toplist = playlists;
+      async getSongData(){
+        const { query: { id } } = this.$route;
+        this.id = id;
+        [
+          { data: { songs: [ this.song ] } },
+          { data: {playlists: this.toplist } },
+          { data: this.commentlist }
+        ] = await Promise.all([
+            api.getSongDetail$ids(this.id),
+            api.getTopPlaylist$limit(10, {order: 'new'}, true),
+            api.getCommentMusic$id(this.id, {offset: 10}, true),
+            api.getLyric$id(this.id)
+        ])
+        
+        const { data: { lrc: { lyric } } } = await api.getLyric$id(id);
+        const result = this.coverLyric(lyric);
+        this.$set(this.song, 'lyrics', result);
+
       },
       coverLyric(lyric){
         let lines = lyric.split('\n');
@@ -62,10 +78,7 @@
       }
     },
     created(){
-      const { query: { id } } = this.$route;
-      this.getSongDetail(id);
-      this.getSongLyric(id);
-      this.getTopPlaylist(10);
+      this.getSongData();
     }
   }
 </script>
@@ -74,5 +87,6 @@
   .m-songDetail{
     padding: 47px 30px 40px 39px;
     background: #fff;
+    margin-bottom: 50px;
   }
 </style>

@@ -7,7 +7,7 @@
             <detail-head :detailData="playlist" v-on:setTracks="handlePlay"></detail-head>
             <detail-song :songData="playlist.tracks"></detail-song>
             <detail-comment :commentData="commentlist"></detail-comment>
-            <sg-pagination :total="commentlist.total" v-on:currentChange="handlePageOffset"></sg-pagination>
+            <sg-pagination :total="commentlist.total" v-on:currentChange="getCommentPlaylist"></sg-pagination>
           </sg-col>
           <sg-col :col="5" :offset="1">
             <slidebar title="最新歌单" :slideData="toplist"></slidebar>
@@ -30,6 +30,7 @@ export default {
     name: 'playlist',
     data(){
       return {
+        id: null,
         playlist: {},
         toplist: [],
         commentlist: []
@@ -42,18 +43,24 @@ export default {
       'detail-comment': detailComment
     },  
     methods: {
-      async getMusicDetail(id){
-        const { data: { playlist } } = await api.getPlaylistDetail$id(id)
-        playlist.createTime = this.formatDate(playlist.createTime);
-        this.playlist = playlist;
-      },
-      async getTopPlaylist(limit){
-        const { data: { playlists }} = await api.getTopPlaylist$limit(limit, {order: 'new'}, true);
-        this.toplist = playlists;
-      },
-      async getCommentPlaylist(id, offset){
-        const { data }= await api.getCommentPlaylist$id(id, {offset: offset}, true);
+      async getCommentPlaylist(offset){
+        const { data }= await api.getCommentPlaylist$id(this.id, {offset: offset}, true);
         this.commentlist = data;
+      },
+      async getPlaylistData(){
+        const { query: { id }} = this.$route;
+        this.id = id;
+        [
+          { data: { playlist: this.playlist } },
+          { data: { playlists: this.toplist } },
+          { data: this.commentlist }
+        ] = await Promise.all([
+            api.getPlaylistDetail$id(id),
+            api.getTopPlaylist$limit(10, {order: 'new'}, true),
+            api.getCommentPlaylist$id(this.id, {offset: 0}, true)
+        ])
+
+        this.playlist.createTime = this.formatDate(this.playlist.createTime);
       },
       formatDate(now){
         const date = new Date(now);
@@ -62,16 +69,9 @@ export default {
       handlePlay(){
         this.$store.commit('getTracks', this.playlist.tracks);
       },
-      handlePageOffset(value){
-        const { query: { id }} = this.$route; 
-        this.getCommentPlaylist(id, value);
-      }
     },
     created(){
-      const { query: { id }} = this.$route;
-      this.getMusicDetail(id);
-      this.getTopPlaylist(10);
-      this.getCommentPlaylist(id, 0);
+      this.getPlaylistData();
     }
   }  
 </script>
