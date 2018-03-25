@@ -2,9 +2,13 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import MusicHome from '../view/MusicHome.vue';
 import MusicPlayer from '../view/MusicPlayer.vue';
-import MusicPlayList from '../view/MusicPlayList.vue';
-import MusicAlbum from '../view/MusicAlbum.vue';
-import MusicSong from '../view/MusicSong.vue';
+import DetailPlayList from '../view/DetailPlayList.vue';
+import DetailAlbum from '../view/DetailAlbum.vue';
+import DetailSong from '../view/DetailSong.vue';
+import DetailArtist from '../view/DetailArtist.vue'
+import MusicPlayLists from '../view/MusicPlayLists.vue';
+import MusicAlbumLists from '../view/MusicAlbum.vue';
+import MusicArtists from '../view/MusicArtistList.vue';
 
 Vue.use(Router)
 
@@ -13,7 +17,7 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: MusicHome
+      component: MusicHome,
     },
     {
       path: '/player',
@@ -23,17 +27,37 @@ export default new Router({
     {
       path: '/playlist',
       name: 'playlist',
-      component: MusicPlayList
+      component: DetailPlayList
     },
     {
       path: '/album',
       name: 'album',
-      component: MusicAlbum
+      component: DetailAlbum
+    },
+    {
+      path: '/artist',
+      name: 'artist',
+      component: DetailArtist
     },
     {
       path: '/song',
       name: 'song',
-      component: MusicSong 
+      component: DetailSong 
+    },
+    {
+      path: '/playlists',
+      name: 'playlists',
+      component: MusicPlayLists
+    },
+    {
+      path: '/albumlists',
+      name: 'albumlists',
+      component: MusicAlbumLists
+    },
+    {
+      path: '/artistlists',
+      name: 'artistlists',
+      component: MusicArtists
     }
   ]
 })

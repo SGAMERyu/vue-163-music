@@ -6,7 +6,7 @@
           <router-link to="/"></router-link>
         </h1>
         <sg-nav bg="#242424" textColor="#ccc" gutter="19px" activeTextColor="#fff" hoverBg="#000" height="70px" defaultActive="/">
-          <sg-nav-item index="/">发现音乐</sg-nav-item>
+          <sg-nav-item index="home">发现音乐</sg-nav-item>
           <sg-nav-item index="my">我的音乐</sg-nav-item>
           <sg-nav-item index="friend">朋友</sg-nav-item>
           <sg-nav-item index="store">商城</sg-nav-item>
@@ -22,13 +22,13 @@
     </div>
     <div class="menu-flag">
       <div class="menu-warp-f">
-       <sg-nav bg="#C20C0C" textColor="#fff" gutter="20px" activeTextColor="#fff" hoverBg="#9B0909" height="70px" defaultActive="/">
-        <sg-nav-item index="discover">推荐</sg-nav-item>
+       <sg-nav bg="#C20C0C" textColor="#fff" gutter="20px" activeTextColor="#fff" hoverBg="#9B0909" height="70px" defaultActive="home">
+        <sg-nav-item index="home">推荐</sg-nav-item>
         <sg-nav-item index="toplist">排行榜</sg-nav-item>
-        <sg-nav-item index="playlist">歌单</sg-nav-item>
+        <sg-nav-item index="playlists">歌单</sg-nav-item>
         <sg-nav-item index="djradio">主播电台</sg-nav-item>
-        <sg-nav-item index="artist">歌手</sg-nav-item>
-        <sg-nav-item index="album">新碟上架</sg-nav-item>
+        <sg-nav-item index="artistlists">歌手</sg-nav-item>
+        <sg-nav-item index="albumlists">新碟上架</sg-nav-item>
       </sg-nav>
       </div>
     </div>

@@ -26,7 +26,7 @@
         <router-link to="album" class="rank-more">更多</router-link>
       </div>
       <div class="rank-area">
-        <m-albumlist :albumlist="albumLists" v-on:setTracks="handlePlayList"></m-albumlist>
+        <m-albumlist :albumlist="albumLists" v-on:setTracks="handlePlay"></m-albumlist>
       </div>
       <div class="rank-nav">
         <router-link to="toplist" class="rank-title">

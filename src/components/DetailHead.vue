@@ -55,6 +55,32 @@
         <p>{{detailData.description}}</p>
       </div>
     </div>
+    <div class="detail-container" v-else-if="type === 'artist'">
+      <img class="detail-img" :src="detailData.picUrl" alt="">
+      <div class="detail-info">
+        <h2>{{detailData.name}}</h2>
+        <p>
+          <span>单曲: </span>
+          <span>{{detailData.musicSize}}</span>
+        </p>
+        <p>
+          <span>专辑: </span>
+          <span>{{detailData.albumSize}}</span>
+        </p>
+        <p>
+          <span>MV: </span>
+          <span>{{detailData.mvSize}}</span>
+        </p>
+        <div class="detail-toolbar">
+          <span class="btn" @click="setTracks"><i class="far fa-play-circle"></i>播放</span>
+          <span class="btn"><i class="far fa-folder"></i>收藏</span>
+        </div>
+      </div>
+      <div class="detail-desc">
+        <h3>歌手简介</h3>
+        <p>{{detailData.briefDesc}}</p>
+      </div>
+    </div>
     <div class="detail-container" v-else>
       <img class="detail-img" :src="info.picUrl" alt="">
       <div class="detail-info">
@@ -102,7 +128,7 @@
           this.info = this.detailData.info;
         }else if(this.type === 'playlist'){
           this.info = this.detailData.creator;
-        }else{
+        }else if(this.type === 'song'){
           this.info = {
             album: this.detailData.al.name,
             picUrl: this.detailData.al.picUrl,

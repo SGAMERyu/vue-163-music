@@ -5,21 +5,22 @@
       <span class="songlist-count">{{songList.length}}首歌</span>
     </div>
     <ul class="songlist-header">
-      <li class="songlist-name" :class="{isPlaylist: $route.name === 'playlist'}">歌曲标题</li>
+      <li class="songlist-name" :class="{isPlaylist: $route.name !== 'album'}">歌曲标题</li>
       <li class="songlist-author">歌手</li>
-      <li class="songlist-album" v-if="this.$route.name === 'playlist'">专辑</li>
+      <li class="songlist-album" v-if="$route.name !== 'album'">专辑</li>
       <li class="songlist-time">时长</li>
     </ul>
     <ul class="songlist-list">
       <li v-for="(song, index) in songList" :key="index">
         <div class="songlist-number">{{index}}</div>
-        <div class="songlist-name" :class="{isPlaylist: $route.name === 'playlist'}">{{song.name}}</div>
+        <div class="songlist-name" :class="{isPlaylist: $route.name !== 'album'}">{{song.name}}</div>
         <div class="songlist-menu">
           <span class="far fa-play-circle fa-lg" @click="setTracks(song)"></span>
           <span class="fas fa-plus"></span>
           <span class="fas fa-download"></span>
         </div>
         <div class="songlist-author">{{song.author}}</div>
+        <div class="songlist-album" v-if="$route.name !== 'album'">{{song.album}}</div>
         <div class="songlist-time">{{song.dt}}</div>
         <div></div>
       </li>
@@ -40,6 +41,7 @@
       songData(songs){
         this.songList = songs.map((song) => {
           song.author = song['ar'][0].name;
+          song.album = song['al'].name;
           song.dt = this.coverTime(song.dt);
           return song;
         }) 
@@ -149,6 +151,9 @@
         }
         & .songlist-album{
           width: 20%;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
         & .songlist-time{
           width: 50px;

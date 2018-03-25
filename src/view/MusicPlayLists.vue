@@ -2,7 +2,7 @@
   <div>
     <sg-row>
       <sg-col :col="18" :offset="3" class="m-playlists">
-        <m-albumlist :albumlist="albumLists" v-on:setTracks="handlePlay" :limit="35"></m-albumlist>
+        <m-playlist :playData="playLists" v-on:setTracks="handlePlayList" :limit="35"></m-playlist>
           <sg-pagination :total="total" :page-size="35" v-on:currentChange="getPlayList"></sg-pagination>
       </sg-col>
     </sg-row>
@@ -11,26 +11,30 @@
 
 <script>
   import { api } from '../api/api';
-  import albumlist from '../components/alubumlist.vue';
+  import playlist from '../components/playlist.vue';
+
   export default {
-    name: 'albumlists',
+    name: 'playlists',
     data(){
       return {
-        albumLists: [],
+        playLists: [],
         total: 0
       }
     },
     components: {
-      'm-albumlist': albumlist,
+      'm-playlist': playlist,
     },
     methods: {
       async getPlayList(offset){
-        const  { data: { albums: albums, total } }= await api.getTopAlbum$limit(35,{ order: 'hot', offset: offset }, true);
-        this.albumLists = albums;
+        const  { data: { playlists: playLists, total } }= await api.getTopPlaylist$limit(35,{ order: 'hot', offset: offset }, true);
+        this.playLists = playLists.map(list => { 
+          list.picUrl = list.coverImgUrl;
+          return list;
+        });
         this.total = total;
       },
-      handlePlay(playlist){
-        this.$store.dispatch('getAlbumDetail', playlist);
+      handlePlayList(playlist){
+        this.$store.dispatch('getMusicDetail', playlist);
       }
     },
     created(){

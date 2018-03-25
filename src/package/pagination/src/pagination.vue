@@ -14,7 +14,7 @@
     data(){
       return {
         countSize: null,
-        currentCount: null,
+        currentCount: 1,
         showCount: [],
       }
     },
@@ -44,7 +44,7 @@
       },
       currentCount(val){
         this.handleShowCount(val);
-        this.$emit('currentChange', val);
+        this.$emit('currentChange', (val - 1) * this.pageSize);
       },
     },
     methods: {
