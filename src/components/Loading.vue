@@ -1,5 +1,5 @@
 <template>
-  <div class="mask">
+  <div :class="{mask: mask}">
     <div class="loading">
       <div class="loading-inside"></div>
     </div>
@@ -10,7 +10,12 @@
 <script>
 export default {
   name: "loading",
-  props: ['visible']
+  props: {
+    mask: {
+      type: Boolean,
+      default: true,
+    }
+  }
 };
 </script>
 

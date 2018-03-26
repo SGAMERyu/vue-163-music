@@ -1,6 +1,7 @@
 <template>
   <div>
     <sg-row>
+      <m-loading :mask="false" v-show="!isLoading"></m-loading>
       <sg-col :col="18" :offset="3" class="m-artistDetail">
         <detail-head :detailData="artist" v-on:setTracks="handlePlay"></detail-head>
         <detail-song :songData="hotSongs"></detail-song>
@@ -13,6 +14,7 @@
   import { api } from '../api/api';
   import detailHead from '../components/DetailHead.vue';
   import detailSong from '../components/DetailSong.vue';
+  import loading from '../components/Loading.vue';
 
   export default {
     name: 'artist',
@@ -25,10 +27,13 @@
     },
     components: {
       'detail-head': detailHead,
-      'detail-song': detailSong
+      'detail-song': detailSong,
+      'm-loading': loading
     },
     methods: {
       async getArtistData(){
+        this.isLoading = false;
+
         const { query: { id } } = this.$route;
         this.id = id;
         [
@@ -36,6 +41,8 @@
         ] = await Promise.all([
             api.getArtists$id(id)
         ])
+
+        this.isLoading = true;
       },
       handlePlay(){
         this.$store.commit('getTracks', this.hotSongs);

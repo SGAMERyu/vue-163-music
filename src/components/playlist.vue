@@ -29,8 +29,8 @@
     computed: {
       playlist(){
         const data = this.playData.slice(0, this.limit).map(item => {
-          let playCount = item.playCount / Math.pow(10, 4);
-          playCount > 10 ? item.playCount = String(playCount).replace(/\.\d+/, '万') : '';
+          let playCount = Math.floor(item.playCount / Math.pow(10, 4));
+          playCount > 10 ? item.playCount = playCount + '万' : item.playCount = String(item.playCount).replace(/\.\d+/g, ' ');
           return item;
         });
         return data;

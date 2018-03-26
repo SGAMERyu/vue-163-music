@@ -30,7 +30,7 @@
       <span @click="isVolume = !isVolume"><i class="fas fa-volume-up fa-lg"></i></span>
       <span v-if="!isRandom" @click="isRandom = !isRandom" class="fas fa-retweet fa-lg"></span>
       <span v-else @click="isRandom = !isRandom" class="fas fa-random fa-lg"></span>
-      <span class="fas fa-list-ul fa-lg"></span>
+      <span class="fas fa-list-ul fa-lg" @click="routePlayer"></span>
     
     </div>
   </sg-col>
@@ -109,7 +109,6 @@ export default {
     },
     playTracks(val) {
       if(this.playIndex === 0){
-        console.log(1);
         this.setUrl()
       }
       this.playIndex = 0;
@@ -174,6 +173,9 @@ export default {
     },
     next() {
       this.playLength !== 1 ? this.setIndex(this.playIndex + 1) : this.musicAudio.currentTime = 0;
+    },
+    routePlayer(){
+      this.$router.push({name: 'player'})
     }
   },
   mounted() {

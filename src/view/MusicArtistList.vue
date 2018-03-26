@@ -38,5 +38,6 @@
   .m-artistlists{
     padding: 40px;
     background: #fff;
+    margin-bottom: 25px;
   }
 </style>
