@@ -62,7 +62,7 @@ export const api = new Proxy({}, {
 3. 组件共享状态,在vue中目前常用的数据传递方式有props,EventBus,vuex根据应用场景的不同来使用它们
 4. 性能问题，再用chrome的lighthouse测试下才37的评分,无疑是不合格的,后续会学习性能优化的相关知识，在以后更新会考虑到性能问题
 
-![](![](https://github.com/SGAMERyu/vue-163-music/blob/master/images/1.png))
+![](https://github.com/SGAMERyu/vue-163-music/blob/master/images/1.png)
 
 #### 项目地址
 
