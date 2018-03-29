@@ -19,11 +19,12 @@
 #### 项目运行
 
 ```
-npm istall 
+npm install 
 
 npm run dev
 
 // 在163Api文件路径下启动
+npm install
 
 node app.js
 ```
